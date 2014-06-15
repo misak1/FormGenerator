@@ -1,0 +1,477 @@
+
+/* -----------------------------------------
+	初期設定
+----------------------------------------- */
+/* 幅広 */
+.container, .navbar-fixed-top .container, .navbar-fixed-bottom .container {
+width: 95%;
+}
+body {
+	padding-top: 60px;
+	padding-bottom: 40px;
+	
+	font-size:12px;
+	font-family: verdana,"ヒラギノ角ゴ Pro W3","Hiragino Kaku Gothic Pro",Osaka,"ＭＳ Ｐゴシック","MS PGothic",Sans-Serif;
+}
+*:first-child + html body {	/* for IF7 */
+	font-family: "メイリオ","Meiryo";
+}
+
+#main input,
+#main textarea{
+	margin-bottom:3px;
+}
+
+/* -----------------------------------------
+	汎用class
+----------------------------------------- */
+
+.clearfix:after{
+	content:".";
+	display:block;
+	clear:both;
+	height:0;
+	visibility:hidden;
+}
+.clearfix{min-height:1px;}
+* html .clearfix{
+	height: 1px;
+	/*\*//*/
+	height: auto;
+	overflow: hidden;
+	/**/
+}
+
+.left{ float:left;}
+.right{ float:right;}
+.tc { text-align: center;}
+.mg0{ margin:0;}
+
+.mt0{ margin-top:0px;}
+.mt5{ margin-top:5px;}
+.mt10{ margin-top:10px;}
+.mt15{ margin-top:15px;}
+.mt20{ margin-top:20px;}
+.mt25{ margin-top:25px;}
+.mt30{ margin-top:30px;}
+
+.ml0{ margin-left:0px;}
+.ml5{ margin-left:5px;}
+.ml10{ margin-left:10px;}
+.ml15{ margin-left:15px;}
+.ml20{ margin-left:20px;}
+.ml25{ margin-left:25px;}
+.ml30{ margin-left:30px;}
+
+.mb0{ margin-bottom:0px;}
+.mb5{ margin-bottom:5px;}
+.mb10{ margin-bottom:10px;}
+.mb15{ margin-bottom:15px;}
+.mb20{ margin-bottom:20px;}
+.mb25{ margin-bottom:25px;}
+.mb30{ margin-bottom:30px;}
+
+.mr0{ margin-right:0px;}
+.mr5{ margin-right:5px;}
+.mr10{ margin-right:10px;}
+.mr15{ margin-right:15px;}
+.mr20{ margin-right:20px;}
+.mr25{ margin-right:25px;}
+.mr30{ margin-right:30px;}
+
+.pt0{ padding-top:0px;}
+.pt5{ padding-top:5px;}
+.pt10{ padding-top:10px;}
+.pt15{ padding-top:15px;}
+.pt20{ padding-top:20px;}
+.pt25{ padding-top:25px;}
+.pt30{ padding-top:30px;}
+
+.pl0{ padding-left:0px;}
+.pl5{ padding-left:5px;}
+.pl10{ padding-left:10px;}
+.pl15{ padding-left:15px;}
+.pl20{ padding-left:20px;}
+.pl25{ padding-left:25px;}
+.pl30{ padding-left:30px;}
+
+.pb0{ padding-bottom:0px;}
+.pb5{ padding-bottom:5px;}
+.pb10{ padding-bottom:10px;}
+.pb15{ padding-bottom:15px;}
+.pb20{ padding-bottom:20px;}
+.pb25{ padding-bottom:25px;}
+.pb30{ padding-bottom:30px;}
+
+.pr0{ padding-right:0px;}
+.pr5{ padding-right:5px;}
+.pr10{ padding-right:10px;}
+.pr15{ padding-right:15px;}
+.pr20{ padding-right:20px;}
+.pr25{ padding-right:25px;}
+.pr30{ padding-right:30px;}
+
+.width0{ width:0px;}
+.width5{ width:5px;}
+.width10{ width:10px;}
+.width15{ width:15px;}
+.width20{ width:20px;}
+.width25{ width:25px;}
+.width30{ width:30px;}
+.width35{ width:35px;}
+.width40{ width:40px;}
+.width45{ width:45px;}
+.width50{ width:50px;}
+.width55{ width:55px;}
+.width60{ width:60px;}
+.width65{ width:65px;}
+.width70{ width:70px;}
+.width75{ width:75px;}
+.width80{ width:80px;}
+.width85{ width:85px;}
+.width90{ width:90px;}
+.width95{ width:95px;}
+.width100{ width:100px;}
+.width105{ width:105px;}
+.width110{ width:110px;}
+.width115{ width:115px;}
+.width120{ width:120px;}
+.width125{ width:125px;}
+.width130{ width:130px;}
+.width135{ width:135px;}
+.width140{ width:140px;}
+.width145{ width:145px;}
+.width150{ width:150px;}
+.width155{ width:155px;}
+.width160{ width:160px;}
+.width165{ width:165px;}
+.width170{ width:170px;}
+.width175{ width:175px;}
+.width180{ width:180px;}
+.width185{ width:185px;}
+.width190{ width:190px;}
+.width195{ width:195px;}
+.width200{ width:200px;}
+
+input.txt{ width:320px;}
+
+/* -----------------------------------------
+	基本設計
+----------------------------------------- */
+#sidebar{
+	float:left;
+	width:190px;
+	margin-left:-10px;
+	/*margin-left:20px;*/
+}
+#main{
+	float:left;
+	/*width:100%;*/
+	margin-left:50px;
+}
+#footer{
+	padding-top:10px;
+	margin-top:40px;
+	border-top:solid 1px #ccc;
+	text-align: left;
+}
+
+/* -----------------------------------------
+	.navbar
+		ヘッダー
+----------------------------------------- */
+.navbar .btn-warning{
+	margin:0;
+	padding:0;
+	
+	/* 「新規登録」位置調整 */
+	margin-top:4px;
+	margin-left:15px;
+}
+.navbar .btn-warning a{
+	padding:0;
+}
+.navbar .btn-warning a i{
+	margin-right:4px;
+}
+.navbar .nav > li.btn-warning  > a{
+	padding: 5px 10px 5px 8px;
+	color:#fff;
+}
+
+.navbar li.site a{ color:#fff;}
+.navbar li.site a:hover{ color:#08C;}
+.navbar li.site i{
+	margin-right:5px;
+}
+
+
+/* -----------------------------------------
+	#sidebar
+		サイドバー
+----------------------------------------- */
+#sidebar ul{
+	margin:0;
+}
+#sidebar li{
+	list-style:none;
+	margin-bottom:10px;
+}
+#sidebar li a{
+	width:170px;
+	padding:10px;
+	text-align:left;
+}
+#sidebar ul i{
+	margin:0 5px 0 0;
+}
+
+/* -----------------------------------------
+	カスタマイズ
+----------------------------------------- */
+
+/* ---------------------
+	ログイン
+------------------------- */
+.login{
+	width:270px;
+	/*margin:0 auto;*/
+	margin : 50px 50px auto ;
+}
+
+
+/* ---------------------
+	一覧
+------------------------- */
+/* コンテンツ名 */
+.contents-name{
+	font-weight:normal;
+	color:#000;
+	font-size:18px;
+	padding:10px;
+	margin-bottom:30px;
+}
+
+/* 検索 */
+.form-title{
+	font-size:14px;
+	color:#000;
+	padding-right:20px;
+	margin-left:10px;
+}
+
+.entry-all{
+	
+}
+
+/* ------
+	コンテンツ一覧
+	table周り
+	650px
+----------------------------------------- */
+
+.table caption{
+	text-align:left;
+	font-size:16px;
+	margin-bottom:10px;
+}
+/* tableリセット用CSSリセット */
+.contents-list .table-bordered{
+	border:none;
+}
+.contents-list .table-bordered th,
+.contents-list .table-bordered td{
+	border:none;
+}
+.table-bordered{
+	border:none;
+	
+	border-left: solid 1px #ddd;
+	border-top: solid 1px #ddd;
+}
+.table-bordered th + th,
+.table-bordered td + td,
+.table-bordered th + td,
+.table-bordered td + th {
+	border-left: none;
+}
+.table th,
+.table td{
+	border-bottom:solid 1px #ddd;
+	border-right:solid 1px #ddd;
+	border-left:none;
+	border-top:none;
+	vertical-align: middle;
+}
+.contents-list th{
+	background-color: #F1F1F1;
+	background-image: -moz-linear-gradient(center top , #F9F9F9, #ECECEC);
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(rgb(249, 249, 249)), to(rgb(236, 236, 236)));
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+.contents-list th input{
+	margin-bottom: 0;
+	margin-left:10px;
+}
+
+.table th.tc,
+.table td.tc{
+	text-align:center;
+}
+
+/* ---------------------
+	投稿画面
+------------------------- */
+.entry-inner{
+	
+}
+
+
+/* 投稿フォーム 650px */
+.entry-form{
+	
+}
+.entr--form table{
+	width:100%;
+}
+.entry-form th,
+.entry-form td{
+	vertical-align: top;
+	padding:15px 10px;
+}
+.entry-form th{
+	text-align: left;
+	width: 150px;
+}
+.entry-form td{
+	text-align: left;
+}
+
+.entry-form .caution{
+	color:red;
+	font-size:10px;
+}
+
+.entry-form .product_id_list{
+	width:100%;
+}
+
+.entry-form td textarea{
+	width:450px;
+	height:100px;
+}
+
+.entry-form td input.input-file{
+	width: 100%;
+}
+
+.entry-form td input.error,
+.entry-form td select.error,
+.entry-form td textarea.error{
+	color: #B94A48;
+	border-color: #B94A48;
+}
+.entry-form td input.error:focus,
+.entry-form td select.error:focus,
+.entry-form td textarea.error:focus{
+	border-color: #953b39;
+	-webkit-box-shadow: 0 0 6px #d59392;
+	-moz-box-shadow: 0 0 6px #d59392;
+	box-shadow: 0 0 6px #d59392;
+}
+
+.entry-form td .list{
+	padding-bottom:8px;
+	margin-bottom:8px;
+	border-bottom:dotted 1px #ccc;
+}
+
+/* 公開設定 */
+.entry-form .status{
+	width:100px;
+}
+.entry-form .status-title{
+	width:70px;
+	float:left;
+	text-align:left;
+}
+/*input.submit{
+	margin:10px 30px 0 0;
+	padding-top:8px;
+	padding-bottom:8px;
+	width:120px;
+}*/
+
+input.submit{
+	margin-bottom:0;
+	margin-right:20px;
+}
+
+
+/* ドラック */
+#jquery-ui-sortable {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	margin-bottom:20px;
+}
+#jquery-ui-sortable li {
+	margin: 0 3px 3px 3px;
+	padding: 0.3em;
+	padding-left: 1em;
+	font-size: 15px;
+	font-weight: bold;
+	cursor: move;
+}
+
+.ui-state-default{
+	vertical-align:middle;
+}
+.ui-state-default .dummy{
+	display: none;
+}
+.ui-state-default .id{
+	display: none;
+}
+.ui-state-default .words{
+	float: left;
+	width:60px;
+}
+.ui-state-default .name{
+	float: left;
+}
+.ui-state-default .public{
+	float: right;
+	width:80px;
+	
+}
+.ui-state-default .edit{
+	float: right;
+	width:100px;
+}
+.ui-state-default .edit a:link,
+.ui-state-default .edit a:visited{
+	color:#fff;
+}
+
+.alert_login{
+	width:270px;
+	 margin:0 auto 0 auto;
+}
+
+/** edit7 **/
+.tr_ja{
+	
+}
+.tr_en{
+	background-color: #F0F8FF;
+}
+
+/** show1, show2 **/
+.bg_even{
+	background-color: #FFFFFF;
+}
+.bg_odd{
+	background-color: #F0F8FF;
+}

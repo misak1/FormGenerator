@@ -1,0 +1,80 @@
+<?php 
+$keytag = getKEYTAG();
+require_once('../mailform/boot.php');
+?>
+<?php
+include("mailform_header.html");
+?>
+
+<p class="fl"><strong>入力内容を確認して送信ボタンを押して下さい。</strong></p>
+
+<!-- formArea -->
+<div class="formArea">
+
+<table>
+
+<tr>
+<th>カテゴリ<span>（必須）</span></th>
+<td>
+<?php
+$c = new category();
+echo htmlspecialchars($c -> nameById($category));
+?>
+</td>
+</tr>
+
+<tr>
+<th>会社名</th>
+<td><?php echo htmlspecialchars($company); ?></td>
+</tr>
+
+<tr>
+<th>お名前<span>（必須）</span></th>
+<td><?php echo htmlspecialchars($username); ?></td>
+</tr>
+
+<tr>
+<th>メールアドレス<span>（必須）</span></th>
+<td><?php echo htmlspecialchars($email); ?></td>
+</tr>
+
+<tr>
+<th>お電話番号</th>
+<td><?php echo htmlspecialchars($tel); ?></td>
+</tr>
+
+<tr>
+<th>お問い合わせ内容<span>（必須）</span></th>
+<td><?php echo nl2br(htmlspecialchars($content)); ?></td>
+</tr>
+</table>
+
+<!-- /formArea --></div>
+
+<p class="txtC">
+<form method="post" action="edit.php" style="float:left; margin-left:175px;">
+<input type="hidden" name="pagemode" value="edit" />
+<?php echo $keytag; ?>
+<input id="btnReturn" type="image" src="../mailform/images/btn_return.gif" alt="戻る" />
+</form>
+<form method="post" action="finish.php" style="float:left;">
+<input type="hidden" name="pagemode" value="finish" />
+<?php echo $keytag; ?>
+<input id="btnSend" type="image" src="../mailform/images/btn_send.gif" alt="送信" />
+</form>
+</p>
+
+<!-- js -->
+<script type="text/javascript" src="../common/js/jquery-1.8.2.min.js"></script>
+<script type="text/javascript" src="../common/js/default.js"></script>
+<script type="text/javascript" src="../common/js/jquery.jqtransform.js" ></script>
+<script language="javascript">
+$(function(){
+$('form').jqTransform({imgPath:'/common/images/'});
+});
+</script>
+
+<?php include("mailform_footer.html"); ?>
+
+</body>
+</html>

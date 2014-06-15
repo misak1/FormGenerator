@@ -1,0 +1,24 @@
+<configuration xmlns="http://logging.apache.org/log4php/">
+    <appender name="default" class="LoggerAppenderFile">
+        <param name="file" value="/home/Imageworks/htdocs/iw_mailform/log/default.log" />
+        <layout class="LoggerLayoutPattern">
+            <param name="conversionPattern" value="%date [%logger] %message%newline" />
+        </layout>
+        <param name="MaxBackupIndex" value="5" />
+        <param name="MaxFileSize" value="3MB" />
+    </appender>
+    <appender name="debugAppender" class="LoggerAppenderFile">
+        <param name="file" value="/home/Imageworks/htdocs/iw_mailform/log/debug.log" />
+        <layout class="LoggerLayoutPattern">
+            <param name="conversionPattern" value="%date{Y-m-d H:i:s.u} %logger %-5level  %sessionid %file(%line) %msg%n" />
+        </layout>
+    </appender>
+    <root>
+        <level value="warn" />
+        <appender_ref ref="default" />
+    </root>
+    <logger name="debugLogger">
+        <level value="debug" />
+        <appender_ref ref="debugAppender"/>
+    </logger>
+</configuration>

@@ -1,0 +1,407 @@
+@charset "euc-jp";
+/* CSS Document */
+
+body{
+	margin:0;
+	padding:0;
+	text-align:center;
+	font-size:75%;
+	letter-spacing:1pt;
+	color:#727171;
+	background-color:#FFF;
+}
+
+img,a,p,ul{
+	border:0;
+	margin:0;
+	padding:0;
+}
+
+h1,h2,h3,h4,h5,h6{
+	margin:0;
+	padding:0;
+	font-size:100%;
+}
+
+a{
+	color:#727171;
+	text-decoration:none;
+	margin:0;
+}
+a:hover{
+	color:#727171;
+	text-decoration:underline;
+}
+
+span.bold{
+	font-weight:bold;
+}
+
+.clear{
+	clear:both;
+}
+
+.orange{
+	color:#FF6D01;
+
+}
+
+span.red{
+	color:#990000;
+}
+
+.mb10{
+	margin-bottom:10px;
+}
+/*----------*/
+/*	header	*/
+/*----------*/
+
+#head_bLine{
+	background:url(../img/bg_line.jpg) repeat-x top;
+	width:100%;
+	height:26px;
+	margin-top:0;
+	text-align:center;
+	display:table;
+}
+
+#head_bLine img{
+	width:36px;
+	height:18px;
+	margin:3px auto 5px auto;
+	display:block;
+}
+
+#headerArea{
+	width:950px;
+	height:80px;
+	margin:0 auto;
+	padding:0;
+	clear:both;
+}
+
+#logo{
+	width:316px;
+	height:30px;
+	margin-top:50px;
+	padding:0;
+	float:left;
+}
+
+#glovalNavi{
+	margin:56px 0 11px 0;
+	float:right;
+	list-style:none;
+	display:inline;
+}
+
+#glovalNavi li{
+	margin:0 0 0 0;
+	padding:0 0 0 0;
+	float:left;
+	height:13px;
+}
+
+#glovalNavi li img#info{
+	margin:0 3px;
+}
+
+#glovalNavi li img#service{
+	margin:0 23px;
+}
+
+#glovalNavi li img#company{
+	margin:0 18px;
+}
+
+#glovalNavi li img#recruit{
+	margin:0 21px;
+}
+
+/*----------*/
+/*  footer  */
+/*----------*/
+
+#footer{
+	width:100%;
+	background:#FFFFFF;
+	margin:0;
+	padding:0;
+	border:none;
+	clear:both;
+	display:table;
+
+}
+
+#footer h3{
+	margin-bottom:20px;
+	display:block;
+}
+
+
+#NaviArea{
+	background:url(../img/bg_localnavi.jpg) no-repeat;
+	margin:0 auto;
+	padding:0;
+	display:table;
+	width:960px;
+	height:116px;
+}
+#footer ul.localNavi_1{
+	margin:20px 0 0 0;
+}
+
+#footer ul.localNavi_2{
+	margin:0 auto;
+}
+
+#footer ul li{
+	display:inline;
+	list-style:none;
+}
+
+#robot{
+	margin:25px auto 25px auto;
+}
+
+#foot_bLine{
+	background:url(../img/bg_line.jpg) repeat-x top;
+	width:100%;
+	height:26px;
+	margin:0px 0 0 0;
+	padding:0;
+	text-align:center;
+	display:table;
+}
+
+#foot_bLine img{
+	vertical-align:middle;
+	display:inline;
+}
+
+#foot_bLine img.icon{
+	margin:6px 8px 8px 8px;
+}
+
+#foot_bLine img.iiw{
+	margin:2px 0 5px 0;
+}
+
+#copy{
+	margin-bottom:10px;
+}
+/* Contents */
+
+/* clear */
+
+div.clear{
+	clear: both;
+	margin: 0;
+	padding: 0;
+	visibility: hidden;
+	font-size: 0;
+	line-height: 0;
+
+}
+
+
+
+#container{
+	margin: 0 auto;
+	width: 100%;
+	text-align:center;
+	background-color:#f7f5f1;
+	display:table;
+	margin-top:10px;
+}
+
+
+/* contentshead */
+
+#contentHead{
+	width:100%;
+	display:table;
+	border-bottom:1px solid #d7d4cf;
+
+}
+
+#naviList{
+	width:100%;
+	background-color:#e5e2dd;
+	text-align:center;
+	padding:8px 0;
+}
+
+.Contents{
+	width:950px;
+	display:table;
+	text-align:left;
+	margin:0 auto;
+}
+
+ul.Pnavi{
+	list-style-type:none;
+	margin:0 auto;
+	padding:0;
+	width:950px;
+}
+
+ul.Pnavi li{
+	list-style-type:none;
+	margin:0 8px 0 0;
+	padding:0;
+	float:left;
+}
+
+ul.Pnavi li span{
+	color:#5d5b58;
+}
+
+#PageTitle{
+	width:100%;
+	text-align:center;
+	padding:15px 0;
+}
+
+/* maincontents */
+
+#Main{
+	width:950px;
+	margin:0 auto;
+	padding:20px 0;
+	display:table;
+}
+
+
+/* contextsNavi */
+
+#contextsMenu{
+	background:url(../../service/shared/img/contextmenu_bg_center.gif) repeat-y center;
+	width:950px;
+	display:table;
+}
+
+
+#contextsMenu_top{
+	background:url(../../service/shared/img/contextmenu_bg_top.gif) no-repeat top;
+	width:950px;
+	display:table;
+	
+}
+
+#contextsMenu_bottom{
+	background:url(../../service/shared/img/contextmenu_bg_bottom.gif) no-repeat bottom;
+	width:950px;
+	display:table;
+	clear:both;
+}
+
+.contextsInner{
+	text-align:left;
+	float:left;
+	display:table;
+	margin:18px 0 0 0;
+	padding:0 0 18px 40px;
+}
+
+.contextsInner p img.bullet{
+	vertical-align:bottom;
+}
+
+.contextsInner_long{
+	width:75%;
+	text-align:left;
+	float:left;
+	display:table;
+	margin:18px 0 0 0;
+	padding:0 0 18px 40px;
+}
+
+.contextsInner ul{
+	margin-top:5px;
+	font-size:1em;
+	line-height:180%;
+	display:table;
+}
+
+.contextsInner ul.StyleNone{
+	line-height:120%;
+	list-style:none;
+}
+
+.contextsInner li{
+	background:url(../../service/shared/img/list_img.gif) no-repeat left ;
+	list-style:none;
+	padding-left:10px;
+}
+.contextsInner ul.StyleNone li,
+.contextsInner_long ul.StyleNone li{
+	background:none;
+	list-style:none;
+	padding:0;
+}
+
+.contextsInner li a{
+	text-decoration:underline;
+}
+
+.contextsInner p{
+	font-weight:bold;
+	font-size:1em;
+	padding:0;
+}
+
+.to_top{
+	float:right;
+	margin:0 0 10px 0 ;
+	padding:0;
+	display:block;
+}
+
+
+
+
+.omikuji{
+	width: 900px;
+	height: 504px;
+	text-align: center;
+	background: #CCCCCC;
+    position:absolute;
+    top:50%;
+    left:50%;
+	margin: -252px 0 0 -450px;
+
+}
+.omikuji p{
+	padding-top: 100px;
+}
+
+
+
+
+
+
+/* 20100413 追記*/
+
+#headerArea #glovalNavi {
+	background:url(../img/naviLine.gif) no-repeat right 1px;
+}
+#headerArea #glovalNavi li {
+	background:url(../img/naviLine.gif) no-repeat left 1px;
+	height:1%;
+	padding:0 0 0 0;
+	margin:0 0 0 0;
+}
+#headerArea #glovalNavi li img{
+	margin:0 3px;
+	padding:0 0 0 0;
+	line-height:1%;
+	font-size:1%;
+}
+
+
+/* 20100622 追記*/
+.LH{
+	line-height:1.5;
+}

@@ -1,0 +1,28 @@
+<?php
+$html = <<< TAG
+<p>
+[iwmf type="checkbox" data="male,famale"]
+I
+[iwmf type="text" value="hoge:\"hoge" name="test_name"]
+E
+[iwmf type="radio" data="apple,banana"]<br/>[iwmf type="text"]
+</p>
+TAG;
+ 
+// 対象文字列を配列として取り出す。
+preg_match_all('[[\[](.*?)[\]]]', $html, $src);
+
+$frm = array(); // 置換前文字列
+$dst = array(); // 置換後文字列
+
+echo "<pre>";var_dump($src[0]);echo "</pre>";
+ 
+foreach($src[0] as $s){ // 取り出した配列を元に置換前後の文字列を配列にする
+  $dst[] = strtoupper($s); // 大文字へ変換
+  $frm[] = '!'.preg_quote($s).'!u'; // デリミタの追加とクォート（念の為）
+}
+$html = preg_replace ( $frm , $dst, $html);
+ 
+var_dump($html);
+?>
+

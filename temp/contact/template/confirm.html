@@ -1,0 +1,97 @@
+<?php include("iw_mailform_header.html"); ?>
+						<h1>CONTACT</h1>
+                        
+<!-- <p class="txtalignRight"><a href="http://www.imagica-imageworks.co.jp/company/recruit.html"><img src="btn_rec.gif" alt="採用情報はこちら" /></a></p> -->
+<h2 class="ttl_page mb20">
+<?php echo _L('F_CONTACT_SUB'); ?>
+</h2>
+
+<div id="form">
+
+<?php 
+$keytag = getKEYTAG();
+require_once('../iw_mailform/boot.php');
+?>
+
+<input type="hidden" id="id_lang" name="lang" value="<?php echo $_GET['lang']; ?>"/>
+<?php if($_GET['lang'] === 'en'){ ?>
+	<p class="txt_01 contact_read mb20"><strong>Check your entries , then press the "SEND". To modify , press "BACK"<br><span class="mark_sharp">*</span>Required Information</strong></p>
+<?php }else{ ?>
+	<p class="txt_01 contact_read mb20"><strong>入力内容を確認して送信ボタンを押して下さい。</strong></p>
+<?php } ?>
+
+
+<!-- formArea -->
+<div class="formArea">
+
+<table id="confirm">
+
+<tr>
+<?php if($_GET['lang'] === 'en'){ ?>
+	<?php /* 英語版 */ ?>
+<?php }else{  ?>
+	<th>カテゴリ<span>（必須）</span></th>
+	<td>
+<?php
+$c = new category();
+echo htmlspecialchars($c -> nameById($category));
+?>
+</td>
+<?php } ?>
+</tr>
+
+<tr>
+<th><?php echo _L('F_COMPANY'); ?></th>
+<td><?php echo htmlspecialchars($company); ?></td>
+</tr>
+
+<tr>
+<th><?php echo _L('F_FULLNAME'); ?></th>
+<td><?php echo htmlspecialchars($username); ?></td>
+</tr>
+
+<tr>
+<th><?php echo _L('F_E-MAIL'); ?></th>
+<td><?php echo htmlspecialchars($email); ?></td>
+</tr>
+
+<tr>
+<th><?php echo _L('F_TEL'); ?></th>
+<td><?php echo htmlspecialchars($tel); ?></td>
+</tr>
+
+<tr>
+<th><?php echo _L('F_QUESTION'); ?></th>
+<td><?php echo nl2br(htmlspecialchars($content)); ?></td>
+</tr>
+</table>
+
+<!-- /formArea --></div>
+
+<div id="btn_area" class="clearfix">
+<form id="confirm" method="post" action="edit.php" class="left">
+<input type="hidden" name="pagemode" value="edit" />
+<?php echo $keytag; ?>
+<?php if($_GET['lang'] === 'en'){ ?>
+	<input id="btnReturn" style="margin-right:10px" width="180" height="55" type="image" src="/iw_mailform/images/btn_back_en_o.gif" alt="BACK" class="ro"/>
+<?php }else{ ?>
+	<input id="btnReturn" style="margin-right:10px" width="180" height="55" type="image" src="/iw_mailform/images/btn_back_jp_o.gif" alt="戻る" class="ro"/>
+<?php } ?>
+</form>
+<form method="post" action="finish.php" class="right">
+<input type="hidden" name="pagemode" value="finish" />
+<?php echo $keytag; ?>
+<?php if($_GET['lang'] === 'en'){ ?>
+	<input id="btnSend" type="image" width="180" height="55" src="/iw_mailform/images/btn_send_en_o.gif" alt="SEND" class="ro"/>
+<?php }else{ ?>
+	<input id="btnSend" type="image" width="180" height="55" src="/iw_mailform/images/btn_send_jp_o.gif" alt="送信" class="ro"/>
+<?php } ?>
+</form>
+</div>
+
+</div>
+
+<?php include("iw_mailform_footer.html"); ?>
+
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>ニュース- <?php echo _L('SITENAME'); ?></title>
+
+<!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<!-- CSS -->
+<link href="./css/bootstrap.min.css" rel="stylesheet">
+<!-- JS -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="./js/multiple.js"></script>
+<!-- カスタマイズ用CSS -->
+<link href="./css/style.css" rel="stylesheet">
+
+</head>
+<body>
+<!-- ヘッダー -->
+<div class="navbar navbar-fixed-top">
+	<div class="navbar-inner">
+		<div class="container">
+			<a class="brand" href="./dashboard.php"><?php echo _L('SITENAME'); ?></a>
+			<ul class="nav">
+				<!-- li class="btn btn-warning"><a href=""><i class="icon-edit icon-white"></i>新規登録</a></li -->
+			</ul>
+			
+			<ul class="nav pull-right">
+				<li class="divider-vertical"></li>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+					ログインID：<?php print($_SESSION['LOGIN_ID']); ?>
+					<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu">
+						<li><a href="">更新マニュアル</a></li>
+						<li class="divider"></li>
+						<li><a href="logout.php">ログアウト</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+<!-- //ヘッダー -->
+
+
+<div class="container">
+	
+	<div class="row clearfix">
+		
+        <!-- 左カラム -->
+        <div id="sidebar">
+        <?php include('inc_menu.html'); ?>
+        </div>
+        <!-- //左カラム -->
+		
+		<!-- 右カラム -->
+		<div id="main"><div class="row">
+		
+			<!-- 返信用メールフォーム -->
+            <div class="breadcrumb contents-name">
+                <?php echo _L('EDIT10_TITLE'); ?>
+            </div>
+			<!-- //コンテンツ名 -->
+            <h3 class="mb10"><?php echo _L('EDIT10_LIST1'); ?></h3>
+            
+			<!-- コンテンツ一覧 -->
+			<table class="table table-bordered contents-list">
+			<thead>
+			<tr>
+			    <th class="width25">選択</th>
+			    <th class="width25">No</th>
+				<th class="">メールアドレス</th>
+				<th class="">備考</th>
+				<!-- <th class="width140">effective</th> -->
+			</tr>
+			</thead>
+			<tbody>
+<form method="post" name="frm2" action="edit10_confirm.php">
+<?php
+$r = new reply();
+$ary = $r->getReplys();
+$i = 0;
+foreach ($ary as $replys) {
+?>
+<tr>
+<td><input type="radio" name="reply_id" value="<?php echo htmlspecialchars($replys['reply_id']); ?>" id="checkreply_id<?php echo $i; ?>"></input></td>
+<td><?php echo htmlspecialchars($replys['reply_id']); ?></td>
+<td><?php echo nl2br(htmlspecialchars($replys['mail_address'])); ?></td>
+<td><?php echo nl2br(htmlspecialchars($replys['mail_note'])); ?></td>
+<!-- <td><?php echo htmlspecialchars($replys['effective_flg']); ?></td> -->
+</tr>
+<?php
+	$i++;
+}
+?>
+<input type="hidden" name="pagemode" value="">
+<?php
+$tagstr = getKEYTAG();
+echo $tagstr;
+?>
+</form>
+<script type="text/javascript" src="/iw_mailform/js/edit10.js"></script>
+
+<hr/>
+
+			</tbody>
+			</table>
+			<!-- //コンテンツ一覧 -->
+			
+
+			<div class="entry-nav clearfix">
+<input type="button" class="btn btn-info" onclick="modify_submit('<?php echo $i; ?>');" value="編集">
+<input type="button" class="btn btn-danger" onclick="delete_submit('<?php echo $i; ?>');" value="削除">
+			    
+<hr/>
+			    <form method="post" name="frm1" action="edit10_confirm.php">
+メールアドレス<br/>
+<input type="text" class="input-xxlarge" name="edt10_mail_address" id="" value="" />
+<br/>
+備考<br/>
+<input type="text" class="input-xxlarge" name="edt10_mail_note" id="" value="" />
+<br/>
+<input type="button" class="btn btn-primary" onclick="frm1.submit();" value="追加">
+<input type="hidden" name="pagemode" value="confirm" />
+<?php 
+echo $tagstr;
+?>
+</form>
+			</div>
+			
+		</div>
+		</div>
+	</div>
+	
+	
+	<!-- フッター -->
+	<div id="footer">
+		<?php echo _L('COPYWRITE'); ?>
+	</div>
+	<!-- //フッター -->
+	
+</div>
+
+
+
+<!-- 下記のJSは必須 -->
+<script src="./js/bootstrap.min.js"></script>
+</body>
+</html>

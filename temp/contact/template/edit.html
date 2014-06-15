@@ -1,0 +1,114 @@
+<?php 
+require_once('../iw_mailform/boot.php');
+require_once('../iw_mailform/contactlib.php');
+?>
+<?php
+include("iw_mailform_header.html");
+?>
+
+						<h1>CONTACT</h1>
+                        
+<!-- <p class="txtalignRight"><a href="http://www.imagica-imageworks.co.jp/company/recruit.html"><img src="btn_rec.gif" alt="採用情報はこちら" /></a></p> -->
+<h2 class="ttl_page mb20">
+<?php echo _L('F_CONTACT_SUB'); ?>
+</h2>
+
+<!--
+<p class="btn_ja_en">
+	<?php if($_GET['lang'] === 'en'){ ?>
+		<a href="contact/index.php"><img src="../../iw_mailform/images/tab_ja_o.gif" alt="japan" /></a><img src="../../iw_mailform/images/tab_en_h.gif" alt="english" />
+	<?php }else{  ?>
+		<img src="../../iw_mailform/images/tab_ja_h.gif" alt="japan" /><a href="contact/en/index.php"><img src="../../iw_mailform/images/tab_en_o.gif" alt="english" /></a>
+	<?php } ?>
+</p>
+-->
+
+<div id="form">
+
+<?php echo _L('F_CONTACT_EXPLAIN'); ?>
+
+<form method="post" action="confirm.php" name="toiawase2">
+<input type="hidden" id="id_lang" name="lang" value="<?php echo $_GET['lang']; ?>"/>
+<p id="error"></p>
+
+<!-- formArea -->
+<div class="formArea">
+
+<table id="form_cont">
+
+<tr id="trcategory">
+<?php if($_GET['lang'] === 'en'){ ?>
+	<?php /* 英語版のカテゴリIDを指定 */ ?>
+	<input id="selectcategory" type="hidden" name="category" value="17" >
+<?php }else{  ?>
+	<th><?php echo _L('F_CATEGORY'); ?></th>
+	<td>
+	<?php
+	$c = new category();
+	$s1 = array("name" => "category", "id" => "selectcategory", "class" => "", "other"=>'');
+	echo $c -> makeSelectSc($s1, htmlspecialchars($category));
+	?>
+	</td>
+<?php } ?>
+</tr>
+
+<tr id="trcompany">
+<th><?php echo _L('F_COMPANY'); ?></th>
+<td><input class="txtF01" type="text" name="company" id="txtcompany" value="<?php echo htmlspecialchars($company); ?>"/></td>
+</tr>
+
+<tr id="trusername">
+<th><?php echo _L('F_FULLNAME'); ?></th>
+<td><input class="txtF01" type="text" name="username" id="txtusername" value="<?php echo htmlspecialchars($username); ?>"/></td>
+</tr>
+
+<tr id="tremail">
+<th><?php echo _L('F_E-MAIL'); ?></th>
+<td><input class="txtF02" type="text" name="email" id="txtemail" value="<?php echo htmlspecialchars($email);?>"/>
+<?php echo _L('F_E-MAIL_EXPLAIN'); ?>
+</td>
+</tr>
+
+<tr id="trtel">
+<th><?php echo _L('F_TEL'); ?></th>
+<td><input class="txtF04" type="text" name="tel" id="txttel" value="<?php echo htmlspecialchars($tel);?>"/></td>
+</tr>
+
+<tr id="trcontent">
+<th><?php echo _L('F_QUESTION'); ?></th>
+<td>
+<textarea rows="20" cols="50" name="content" id="tacontent"><?php echo htmlspecialchars($content); ?></textarea>
+</td>
+</tr>
+</table>
+
+<!-- /formArea --></div>
+
+<?php echo getKEYTAG(); ?>
+<input type="hidden" name="pagemode" value="confirm" />
+
+
+<?php if($_GET['lang'] === 'en'){ ?>
+	<p class="txtC">
+		<img name="confirm" id="btnconfirm" src="/iw_mailform/images/btn_confirm.gif" alt="確認" onClick="validateForm2();" class="ro"/>
+		<input id="chkpolicy" type="hidden" name="policy" value="1" />
+		<script type="text/javascript">window.onload = buttonView();</script>
+	</p>
+<?php }else{  ?>
+	<div class="pCheck rowElem">
+		<input id="chkpolicy" type="checkbox" name="policy" <?php if($policy) echo 'checked="checked"'; ?> onchange="buttonView();"/>
+	<label><a href="popup_policy.html" style="text-decoration:underline; color:#00aee3;" target="_blank">プライバシー・ポリシー</a>に同意する</label>
+	</div>
+	<p class="txtC">
+		<img name="confirm" id="btnconfirm" src="/iw_mailform/images/btn_confirm_jp_h.gif" alt="確認" onClick="validateForm2();"/>
+	</p>
+<?php } ?>
+
+</form>
+
+</div>
+<div id="tel_contact">
+<?php echo _L('F_E-TEL_CONTACT'); ?>
+</div>
+
+<?php include("iw_mailform_footer.html"); ?>
