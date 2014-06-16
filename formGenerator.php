@@ -282,7 +282,29 @@ function replace_f($ary) {
 			$v = preg_replace('/\"$/i', '', $v);
 			$outhtmlChild[] = 'name="' . $v . '[]"';
 		}
+if ($_POST['pagemode'] === 'edit') {
+		if (isset($att['value'])) {
+			// 前後のダブルクォートを削除
+			$v = $att['value'];
+			$v = preg_replace('/^\"/i', '', $v);
+			$v = preg_replace('/\"$/i', '', $v);
 
+			$aryVal = explode(',', $v);
+
+			$parts = "";
+
+			var_dump($aryVal);
+			exit();
+			// index.php confirm.php用
+			foreach ($aryVal AS $v) {
+				$t_ary = $outhtmlChild;
+				$t_ary[] = 'value="' . $v . '"';
+				$parts .= '<label>' . $v . '<input ' . implode(' ', $t_ary) . ' /></label>';
+			}
+
+			$dst[] = $parts;
+		}
+}else{
 		if (isset($att['value'])) {
 			// 前後のダブルクォートを削除
 			$v = $att['value'];
@@ -302,6 +324,7 @@ function replace_f($ary) {
 
 			$dst[] = $parts;
 		}
+}
 	}
 	return $dst;
 }

@@ -21,16 +21,23 @@ _formGenerator($html);
 
 <!-- confirm.php -->
 <!-- 再編集 -->
-<form name="confirm_form" method="post" action="edit.php">
-<input type="hidden" name="pagemode" value="edit" />
+<form name="confirm_form" method="post">
+<input type="hidden" name="pagemode" />
 <?php echo $keytag; ?>
-<input type="button" value="return" onclick='javascript:document.confirm_form.action="edit.php";submit();'/>
+<input type="button" value="return" onclick='action_f("edit");'/>
 
 <!-- 確定 -->
-<input type="hidden" name="pagemode" value="finish" />
 <?php echo $keytag; ?>
-<input type="button" value="done" onclick='javascript:document.confirm_form.action="finish.php";submit();'/>
+<input type="button" value="done" onclick='action_f("finish");'/>
 </form>
+<script type="text/javascript">
+function action_f(to){
+var fm = document.confirm_form;
+fm.action = to +".php";
+fm.pagemode = to;
+fm.submit();
+}
+</script>
 <!-- /confirm.php -->
 </body>
 </html>
