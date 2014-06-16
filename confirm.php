@@ -259,6 +259,11 @@ function writeLog($msg){
     fclose($fp);
 }
 ?>
+
+<?php
+require_once ('formHandler.php');
+?>
+
 <!DOCTYPE HTML>
 <html lang="ja">
 <head>
