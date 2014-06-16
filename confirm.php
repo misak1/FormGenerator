@@ -259,7 +259,8 @@ function writeLog($msg){
     fclose($fp);
 }
 ?>
-
+<?php startSession(); ?>
+<?php //$keytag = getKEYTAG(); ?>
 <?php
 require_once ('formHandler.php');
 ?>
@@ -278,14 +279,14 @@ require_once ('formHandler.php');
 <!-- 再編集 -->
 <form id="confirm" method="post" action="edit.php" class="left">
 <input type="hidden" name="pagemode" value="edit" />
-<?php echo getKEYTAG(); ?>
+<?php echo $keytag; ?>
 	<input type="button" value="return" onclick="javascript:submit();"/>
 </form>
 
 <!-- 確定 -->
 <form method="post" action="finish.php" class="right">
 <input type="hidden" name="pagemode" value="finish" />
-<?php echo getKEYTAG(); ?>
+<?php echo $keytag; ?>
 	<input type="button" value="done" onclick="javascript:submit();"/>
 </form>
 <!-- /confirm.php -->
