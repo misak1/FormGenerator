@@ -270,67 +270,76 @@ function replace_f($ary) {
 				foreach ($_POST[$v] as $vv) {
 					$parts[] .= $vv . '<input type="hidden" name="' . $v . '[]" value="' . $vv . '"/>';
 				}
-				$dst[] = implode(', ',$parts);
+				$dst[] = implode(', ', $parts);
 			}
 			continue;
 		}
 
-		$name;
 		if (isset($att['name'])) {
 			// 前後のダブルクォートを削除
-			$name = $att['name'];
-			$name = preg_replace('/^\"/i', '', $name);
-			$name = preg_replace('/\"$/i', '', $name);
-			$outhtmlChild[] = 'name="' . $name . '[]"';
-		}
-if ($_POST['pagemode'] === 'edit') {
-		if (isset($att['value'])) {
-			// 前後のダブルクォートを削除
-			$v = $att['value'];
+			$v = $att['name'];
 			$v = preg_replace('/^\"/i', '', $v);
 			$v = preg_replace('/\"$/i', '', $v);
+			$outhtmlChild[] = 'name="' . $v . '[]"';
+		}
+		if ($_POST['pagemode'] === 'edit') {
+			if (isset($att['value'])) {
+				// 前後のダブルクォートを削除
+				$v = $att['value'];
+				$v = preg_replace('/^\"/i', '', $v);
+				$v = preg_replace('/\"$/i', '', $v);
 
-			$aryVal = explode(',', $v);
+				$aryVal = explode(',', $v);
 
-			$parts = "";
+				/*
+				 echo "<pre>";
+				 var_dump($_POST['sex']);
+				 echo "</pre>";
+				 */
 
-			var_dump($_POST);
-			exit();
-			
-			// index.php confirm.php用
-			foreach ($aryVal AS $v) {
-				$t_ary = $outhtmlChild;
-				if($v === $_POST[$name][0]){
-					$t_ary[] = 'value="' . $v . '"';
-				}else{
-					$t_ary[] = 'value="' . $v . '"';
+				$parts = "";
+				// index.php confirm.php用
+				foreach ($aryVal AS $v) {
+					$t_ary = $outhtmlChild;
+
+					$n = $att['name'];
+					$n = preg_replace('/^\"/i', '', $n);
+					$n = preg_replace('/\"$/i', '', $n);
+
+					//echo "n=$n v=$v, p=".$_POST[$n][0]."<hr/>";
+
+					if ($v === $_POST[$n][0]) {
+
+						$t_ary[] = 'value="' . $v . '" checked';
+					} else {
+						$t_ary[] = 'value="' . $v . '"';
+					}
+					$parts .= '<label>' . $v . '<input ' . implode(' ', $t_ary) . ' /></label>';
 				}
-				$parts .= '<label>' . $v . '<input ' . implode(' ', $t_ary) . ' /></label>';
+
+				$dst[] = $parts;
 			}
+		} else {
+			if (isset($att['value'])) {
+				// 前後のダブルクォートを削除
+				$v = $att['value'];
+				$v = preg_replace('/^\"/i', '', $v);
+				$v = preg_replace('/\"$/i', '', $v);
 
-			$dst[] = $parts;
-		}
-}else{
-		if (isset($att['value'])) {
-			// 前後のダブルクォートを削除
-			$v = $att['value'];
-			$v = preg_replace('/^\"/i', '', $v);
-			$v = preg_replace('/\"$/i', '', $v);
+				$aryVal = explode(',', $v);
 
-			$aryVal = explode(',', $v);
+				$parts = "";
 
-			$parts = "";
+				// index.php confirm.php用
+				foreach ($aryVal AS $v) {
+					$t_ary = $outhtmlChild;
+					$t_ary[] = 'value="' . $v . '"';
+					$parts .= '<label>' . $v . '<input ' . implode(' ', $t_ary) . ' /></label>';
+				}
 
-			// index.php confirm.php用
-			foreach ($aryVal AS $v) {
-				$t_ary = $outhtmlChild;
-				$t_ary[] = 'value="' . $v . '"';
-				$parts .= '<label>' . $v . '<input ' . implode(' ', $t_ary) . ' /></label>';
+				$dst[] = $parts;
 			}
-
-			$dst[] = $parts;
 		}
-}
 	}
 	return $dst;
 }
@@ -344,13 +353,13 @@ function formHandler() {
 	}
 
 	if (!isValidPage()) {
-		writeLog ("key not match, redirect to index");
+		writeLog("key not match, redirect to index");
 		// inputへ飛ばす
 		doRedirect("./");
 	} else {
-		writeLog ("key not match, redirect to index2");
+		writeLog("key not match, redirect to index2");
 		$pagemode = (isset($_POST['pagemode'])) ? $_POST['pagemode'] : 'index';
-			writeLog("key matches: pagemode=" . $pagemode);
+		writeLog("key matches: pagemode=" . $pagemode);
 		if ($pagemode === 'confirm') {
 			writeLog("pagemode is confirm");
 
