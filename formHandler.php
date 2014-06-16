@@ -8,12 +8,13 @@ foreach ($_SESSION as $k => $v) {
 //echo("_SESSION[" . $k . "]=$v");
 }
 
+echo ("err=$err"."<br/>");
 if (!isValidPage()) {
 	writeLog("key not match, redirect to index");
 	doRedirect("./"); // inputへ飛ばす
 } else {
 	$pagemode = (isset($_POST['pagemode'])) ? $_POST['pagemode'] : 'index';
-	writeLog("key matches: pagemode=" . $pagemode);
+//	writeLog("key matches: pagemode=" . $pagemode);
 	if ($pagemode === 'confirm') {
 	        echo("pagemode is confirm");
                 /*
@@ -27,20 +28,19 @@ if (!isValidPage()) {
                 */
 
 		//$err = validateForm($category, $company, $username, $email, $tel, $content, $policy);
-		echo ("err=$err");
+		echo ("err=( $err )");
 		if ($err === '') {
-			include ('../contact-2014/template/confirm.html');
+			include ('confirm.html');
 		} else {
 			writeLog("問題があるから差し戻す");
-			include ('../contact-2014/template/edit.html');
+			include ('edit.html');
 		}
 	} elseif ($pagemode === 'edit') {
 		echo ("pagemode = edit, username=$username");
-		include ('../contact-2014/template/edit.html');
+		include ('edit.html');
 	} elseif ($pagemode === 'finish') {
-		$r = new reply();
-
-		include ('../contact-2014/template/finish.html');
+echo "[[[]]]";
+//		include ('finish.html');
 	}
 }
 ?>

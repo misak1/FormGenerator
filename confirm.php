@@ -259,11 +259,10 @@ function writeLog($msg){
     fclose($fp);
 }
 ?>
-<?php startSession(); ?>
-<?php //$keytag = getKEYTAG(); ?>
-<?php
-require_once ('formHandler.php');
-?>
+<?php //startSession(); ?>
+<?php $keytag = getKEYTAG(); ?>
+<?php require_once ('formHandler.php'); ?>
+<?php $keytag = getKEYTAG(); ?>
 
 <!DOCTYPE HTML>
 <html lang="ja">
@@ -273,7 +272,9 @@ require_once ('formHandler.php');
 </head>
 <body>
 
+<hr/>
 <?php echo $_POST['name']; ?>
+<hr/>
 
 <!-- confirm.php -->
 <!-- 再編集 -->
