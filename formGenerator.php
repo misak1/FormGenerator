@@ -284,7 +284,7 @@ function replace_f($ary) {
 			$name = trim_d($att['name']);
 			$outhtmlChild[] = 'name="' . $name . '[]"';
 		}
-		
+
 		$value;
 		if ($_POST['pagemode'] === 'edit') {
 			if (isset($att['value'])) {
@@ -295,27 +295,38 @@ function replace_f($ary) {
 				$parts = "";
 				// index.php confirm.php用
 				foreach ($aryVal AS $v) {
+					//var_dump($v); echo "<br/>";
 					$t_ary = $outhtmlChild;
 
-					// TODO
-					//$n = $att['name'];
-					//$n = trim_d($n);
-					//echo "n=$n v=$v, p=" . $_POST[$n][0] . "<hr/>";
-					
-					// checkbox
-					//echo "<pre>";var_dump($att);echo "</pre>";exit;
-					if($type === 'radio'){
+					if ($type === 'text') {
+						// text
+						$t_ary[] = 'value="' . $_POST[$name][0] . '"';
+
+					} else if ($type === 'radio') {
+						// radio
 						if ($v === $_POST[$name][0]) {
 							$t_ary[] = 'value="' . $v . '" checked';
 						} else {
 							$t_ary[] = 'value="' . $v . '"';
 						}
-					}else{
+
+					} else if ($type === 'checkbox') {
+						// checkbox(複数あり)
+						$postAryVal = $_POST[$name];
+						if (in_array($v, $postAryVal, true)) {
+							$t_ary[] = 'value="' . $v . '" checked';
+						} else {
 							$t_ary[] = 'value="' . $v . '"';
+						}
+						$parts .= '<label>' . $v . '<input ' . implode(' ', $t_ary) . ' /></label>';
+							
+						continue;
+						
+					} else {
+						$t_ary[] = 'value="' . $v . '"';
 					}
 					$parts .= '<label>' . $v . '<input ' . implode(' ', $t_ary) . ' /></label>';
 				}
-
 				$dst[] = $parts;
 			}
 		} else {
