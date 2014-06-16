@@ -266,14 +266,15 @@ function replace_f($ary) {
 
 		// confirm
 		if ($_POST['pagemode'] === 'confirm') {
+			$name;
 			if (isset($att['name'])) {
-				$v = $att['name'];
-				$v = trim_d($v);
+				$name = trim_d($att['name']);
 				$parts = array();
-				foreach ($_POST[$v] as $vv) {
-					$parts[] .= $vv . '<input type="hidden" name="' . $v . '[]" value="' . $vv . '"/>';
+				$label = trim_d($att['label']) . "：";
+				foreach ($_POST[$name] as $vv) {
+					$parts[] .= $vv . '<input type="hidden" name="' . $name . '[]" value="' . $vv . '"/>';
 				}
-				$dst[] = implode(', ', $parts);
+				$dst[] = $label . implode(', ', $parts);
 			}
 			continue;
 		}
@@ -292,7 +293,8 @@ function replace_f($ary) {
 				$value = trim_d($att['value']);
 				$aryVal = explode(',', $value);
 
-				$parts = "";
+				$label = trim_d($att['label']) . "：";
+				$parts = $label;
 				// index.php confirm.php用
 				foreach ($aryVal AS $v) {
 					//var_dump($v); echo "<br/>";
@@ -319,13 +321,17 @@ function replace_f($ary) {
 							$t_ary[] = 'value="' . $v . '"';
 						}
 						$parts .= '<label>' . $v . '<input ' . implode(' ', $t_ary) . ' /></label>';
-							
+
 						continue;
-						
+
 					} else {
 						$t_ary[] = 'value="' . $v . '"';
 					}
-					$parts .= '<label>' . $v . '<input ' . implode(' ', $t_ary) . ' /></label>';
+					if ($type === 'radio' || $type === 'checkbox') {
+						$parts .= '<label>' . $v . '<input ' . implode(' ', $t_ary) . ' /></label>';
+					} else {
+						$parts .= '<label>' . $label . '<input ' . implode(' ', $t_ary) . ' /></label>';
+					}
 				}
 				$dst[] = $parts;
 			}
@@ -336,11 +342,20 @@ function replace_f($ary) {
 				$aryVal = explode(',', $value);
 
 				$parts = "";
+				// TODO
+				$label = trim_d($att['label']) . "：";
+				$parts = $label;
 				// index.php confirm.php用
 				foreach ($aryVal AS $v) {
 					$t_ary = $outhtmlChild;
 					$t_ary[] = 'value="' . $v . '"';
-					$parts .= '<label>' . $v . '<input ' . implode(' ', $t_ary) . ' /></label>';
+					if ($type === 'radio' || $type === 'checkbox') {
+						// 複数
+						$parts .= '<label>' . $v . '<input ' . implode(' ', $t_ary) . ' /></label>';
+					} else {
+						// 単一(label上書き)
+						$parts = '<label>' . $label . '<input ' . implode(' ', $t_ary) . ' /></label>';
+					}
 				}
 				$dst[] = $parts;
 			}
