@@ -12,30 +12,27 @@ $keytag = getKEYTAG();
 </head>
 <body>
 <!-- <?php echo __FILE__; ?> -->
-<hr/>
+<!-- confirm.php -->
+
+<form name="confirm_form" method="post">
+
 <?php
 $html = file_get_contents('form.html');
 _formGenerator($html);
 ?>
-<hr/>
 
-<!-- confirm.php -->
-<!-- 再編集 -->
-<form name="confirm_form" method="post">
+<?php echo $keytag; ?>
+
 <input type="hidden" name="pagemode" />
-<?php echo $keytag; ?>
-<input type="button" value="return" onclick='action_f("edit");'/>
-
-<!-- 確定 -->
-<?php echo $keytag; ?>
-<input type="button" value="done" onclick='action_f("finish");'/>
+<input type="button" value="return" onclick='action_f("edit");' /><!-- 再編集 -->
+<input type="button" value="done" onclick='action_f("finish");' /><!-- 確定 -->
 </form>
 <script type="text/javascript">
 function action_f(to){
-var fm = document.confirm_form;
-fm.action = to +".php";
-fm.pagemode = to;
-fm.submit();
+	var fm = document.confirm_form;
+	fm.action = to +".php";
+	fm.pagemode.value = to;
+	fm.submit();
 }
 </script>
 <!-- /confirm.php -->

@@ -275,12 +275,13 @@ function replace_f($ary) {
 			continue;
 		}
 
+		$name;
 		if (isset($att['name'])) {
 			// 前後のダブルクォートを削除
-			$v = $att['name'];
-			$v = preg_replace('/^\"/i', '', $v);
-			$v = preg_replace('/\"$/i', '', $v);
-			$outhtmlChild[] = 'name="' . $v . '[]"';
+			$name = $att['name'];
+			$name = preg_replace('/^\"/i', '', $name);
+			$name = preg_replace('/\"$/i', '', $name);
+			$outhtmlChild[] = 'name="' . $name . '[]"';
 		}
 if ($_POST['pagemode'] === 'edit') {
 		if (isset($att['value'])) {
@@ -293,12 +294,17 @@ if ($_POST['pagemode'] === 'edit') {
 
 			$parts = "";
 
-			var_dump($aryVal);
+			var_dump($_POST);
 			exit();
+			
 			// index.php confirm.php用
 			foreach ($aryVal AS $v) {
 				$t_ary = $outhtmlChild;
-				$t_ary[] = 'value="' . $v . '"';
+				if($v === $_POST[$name][0]){
+					$t_ary[] = 'value="' . $v . '"';
+				}else{
+					$t_ary[] = 'value="' . $v . '"';
+				}
 				$parts .= '<label>' . $v . '<input ' . implode(' ', $t_ary) . ' /></label>';
 			}
 
@@ -337,7 +343,6 @@ function formHandler() {
 		writeLog("_SESSION[" . $k . "]=$v");
 	}
 
-	echo("err=$err" . "<br/>");
 	if (!isValidPage()) {
 		writeLog ("key not match, redirect to index");
 		// inputへ飛ばす
