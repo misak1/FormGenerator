@@ -259,6 +259,7 @@ function writeLog($msg){
     fclose($fp);
 }
 ?>
+<?php startSession(); ?>
 <!DOCTYPE HTML>
 <html lang="ja">
 <head>

@@ -25,9 +25,6 @@ if (!isValidPage()) {
 		$content = (isset($_POST['content'])) ? $_POST['content'] : '';
 		$policy = (isset($_POST['policy'])) ? 1 : 0;
                 */
-echo "<pre>";
-var_dump($_POST);
-echo "</pre>";
 
 		//$err = validateForm($category, $company, $username, $email, $tel, $content, $policy);
 		echo ("err=$err");

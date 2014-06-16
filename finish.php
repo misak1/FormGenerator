@@ -260,6 +260,7 @@ function writeLog($msg){
 }
 ?>
 
+<?php startSession(); ?>
 <?php
 require_once ('formHandler.php');
 ?>
