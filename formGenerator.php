@@ -231,6 +231,12 @@ function writeLog($msg) {
 	fclose($fp);
 }
 
+function trim_d($v) {
+	$v = preg_replace('/^\"/i', '', $v);
+	$v = preg_replace('/\"$/i', '', $v);
+	return $v;
+}
+
 function replace_f($ary) {
 	$dst = array();
 	foreach ($ary AS $v) {
@@ -254,9 +260,7 @@ function replace_f($ary) {
 		if (isset($att['type'])) {
 			// 前後のダブルクォートを削除
 			$v = $att['type'];
-			$v = preg_replace('/^\"/i', '', $v);
-			$v = preg_replace('/\"$/i', '', $v);
-			$outhtmlChild[] = 'type="' . $v . '"';
+			$outhtmlChild[] = 'type="' . trim_d($v) . '"';
 
 		}
 
@@ -264,8 +268,7 @@ function replace_f($ary) {
 		if ($_POST['pagemode'] === 'confirm') {
 			if (isset($att['name'])) {
 				$v = $att['name'];
-				$v = preg_replace('/^\"/i', '', $v);
-				$v = preg_replace('/\"$/i', '', $v);
+				$v = trim_d($v);
 				$parts = array();
 				foreach ($_POST[$v] as $vv) {
 					$parts[] .= $vv . '<input type="hidden" name="' . $v . '[]" value="' . $vv . '"/>';
@@ -278,24 +281,13 @@ function replace_f($ary) {
 		if (isset($att['name'])) {
 			// 前後のダブルクォートを削除
 			$v = $att['name'];
-			$v = preg_replace('/^\"/i', '', $v);
-			$v = preg_replace('/\"$/i', '', $v);
-			$outhtmlChild[] = 'name="' . $v . '[]"';
+			$outhtmlChild[] = 'name="' . trim_d($v) . '[]"';
 		}
 		if ($_POST['pagemode'] === 'edit') {
 			if (isset($att['value'])) {
 				// 前後のダブルクォートを削除
 				$v = $att['value'];
-				$v = preg_replace('/^\"/i', '', $v);
-				$v = preg_replace('/\"$/i', '', $v);
-
-				$aryVal = explode(',', $v);
-
-				/*
-				 echo "<pre>";
-				 var_dump($_POST['sex']);
-				 echo "</pre>";
-				 */
+				$aryVal = explode(',', trim_d($v));
 
 				$parts = "";
 				// index.php confirm.php用
@@ -303,11 +295,8 @@ function replace_f($ary) {
 					$t_ary = $outhtmlChild;
 
 					$n = $att['name'];
-					$n = preg_replace('/^\"/i', '', $n);
-					$n = preg_replace('/\"$/i', '', $n);
-
-					//echo "n=$n v=$v, p=".$_POST[$n][0]."<hr/>";
-
+					$n = trim_d($n);
+					//echo "n=$n v=$v, p=" . $_POST[$n][0] . "<hr/>";
 					if ($v === $_POST[$n][0]) {
 
 						$t_ary[] = 'value="' . $v . '" checked';
@@ -323,20 +312,15 @@ function replace_f($ary) {
 			if (isset($att['value'])) {
 				// 前後のダブルクォートを削除
 				$v = $att['value'];
-				$v = preg_replace('/^\"/i', '', $v);
-				$v = preg_replace('/\"$/i', '', $v);
-
-				$aryVal = explode(',', $v);
+				$aryVal = explode(',', trim_d($v));
 
 				$parts = "";
-
 				// index.php confirm.php用
 				foreach ($aryVal AS $v) {
 					$t_ary = $outhtmlChild;
 					$t_ary[] = 'value="' . $v . '"';
 					$parts .= '<label>' . $v . '<input ' . implode(' ', $t_ary) . ' /></label>';
 				}
-
 				$dst[] = $parts;
 			}
 		}
@@ -391,13 +375,6 @@ function _formGenerator($html) {
 	$dst = array();
 
 	$ary = $src[0];
-	/*
-	 if($_POST['pagemode'] === 'confirm'){
-	 // confirm
-	 $dst = replace_f2($ary);
-	 }else{
-	 */
-	// index edit
 	$dst = replace_f($ary);
 	//}
 
