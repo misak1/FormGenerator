@@ -26,10 +26,10 @@ function isValidPage(){
     if(isset($_SESSION['tagname'])){
         $t = $_SESSION['tagname'];
 
-        echo ("tagname=$t"."\n");
-        echo("keyvalue=". $_SESSION['keyvalue']. "\n");
-        echo("_POST[" . $t . "]=". $_POST[$t]. "\n");
-        echo (($_POST[$t] == $_SESSION['keyvalue']). "\n");
+        writeLog ("tagname=$t");
+        writeLog("keyvalue=". $_SESSION['keyvalue']);
+        writeLog("_POST[" . $t . "]=". $_POST[$t]);
+        writeLog (($_POST[$t] == $_SESSION['keyvalue']));
 
         if(isset($_POST[$t]) && isset($_SESSION['keyvalue']) && $_POST[$t] == $_SESSION['keyvalue']){
             $ret = 1;
@@ -220,6 +220,10 @@ function isTLD($s) {
 }
 
 function writeLog($msg) {
+	if (!file_exists(_IWMFLOG_)) {
+		// Apacheの書込権限がある場合はファイルが作成される
+		touch(_IWMFLOG_);
+	}
 	$fp = fopen(_IWMFLOG_, 'ab');
 	if ($fp) {
 		fwrite($fp, date("Y/m/d H:i:s") . " " . $msg . "\n");
@@ -227,49 +231,145 @@ function writeLog($msg) {
 	fclose($fp);
 }
 
+function replace_f($ary) {
+	$dst = array();
+	foreach ($ary AS $v) {
+		// 前後の余分なテキストを削除
+		$v = preg_replace('/^\[iwmf/i', '', $v);
+		$v = preg_replace('/\]$/i', '', $v);
+
+		$tmp_att = explode(' ', $v);
+		// 空配列は消す
+		$tmp_att = array_filter($tmp_att);
+
+		$att = array();
+		foreach ($tmp_att AS $v2) {
+			list($k, $v) = explode('=', $v2);
+			$att[$k] = $v;
+		}
+
+		$outhtml = array();
+		$outhtmlChild = array();
+
+		if (isset($att['type'])) {
+			// 前後のダブルクォートを削除
+			$v = $att['type'];
+			$v = preg_replace('/^\"/i', '', $v);
+			$v = preg_replace('/\"$/i', '', $v);
+			$outhtmlChild[] = 'type="' . $v . '"';
+
+		}
+
+		// confirm
+		if ($_POST['pagemode'] === 'confirm') {
+			if (isset($att['name'])) {
+				$v = $att['name'];
+				$v = preg_replace('/^\"/i', '', $v);
+				$v = preg_replace('/\"$/i', '', $v);
+				$parts = array();
+				foreach ($_POST[$v] as $vv) {
+					$parts[] .= $vv . '<input type="hidden" name="' . $v . '[]" value="' . $vv . '"/>';
+				}
+				$dst[] = implode(', ',$parts);
+			}
+			continue;
+		}
+
+		if (isset($att['name'])) {
+			// 前後のダブルクォートを削除
+			$v = $att['name'];
+			$v = preg_replace('/^\"/i', '', $v);
+			$v = preg_replace('/\"$/i', '', $v);
+			$outhtmlChild[] = 'name="' . $v . '[]"';
+		}
+
+		if (isset($att['value'])) {
+			// 前後のダブルクォートを削除
+			$v = $att['value'];
+			$v = preg_replace('/^\"/i', '', $v);
+			$v = preg_replace('/\"$/i', '', $v);
+
+			$aryVal = explode(',', $v);
+
+			$parts = "";
+
+			// index.php confirm.php用
+			foreach ($aryVal AS $v) {
+				$t_ary = $outhtmlChild;
+				$t_ary[] = 'value="' . $v . '"';
+				$parts .= '<label>' . $v . '<input ' . implode(' ', $t_ary) . ' /></label>';
+			}
+
+			$dst[] = $parts;
+		}
+	}
+	return $dst;
+}
+
 function formHandler() {
 	foreach ($_POST as $k => $v) {
-		//echo("_POST[" . $k . "]=$v");
+		writeLog("_POST[" . $k . "]=$v");
 	}
 	foreach ($_SESSION as $k => $v) {
-		//echo("_SESSION[" . $k . "]=$v");
+		writeLog("_SESSION[" . $k . "]=$v");
 	}
 
 	echo("err=$err" . "<br/>");
 	if (!isValidPage()) {
-		//echo ("key not match, redirect to index");
-		doRedirect("./");
+		writeLog ("key not match, redirect to index");
 		// inputへ飛ばす
+		doRedirect("./");
 	} else {
-		//echo ("key not match, redirect to index2");
+		writeLog ("key not match, redirect to index2");
 		$pagemode = (isset($_POST['pagemode'])) ? $_POST['pagemode'] : 'index';
-		//	writeLog("key matches: pagemode=" . $pagemode);
+			writeLog("key matches: pagemode=" . $pagemode);
 		if ($pagemode === 'confirm') {
-			echo("pagemode is confirm");
-			/*
-			 $category = (isset($_POST['category'])) ? $_POST['category'] : 0;
-			 $company = (isset($_POST['company'])) ? $_POST['company'] : '';
-			 $username = (isset($_POST['username'])) ? $_POST['username'] : '';
-			 $email = (isset($_POST['email'])) ? $_POST['email'] : '';
-			 $tel = (isset($_POST['tel'])) ? $_POST['tel'] : '';
-			 $content = (isset($_POST['content'])) ? $_POST['content'] : '';
-			 $policy = (isset($_POST['policy'])) ? 1 : 0;
-			 */
+			writeLog("pagemode is confirm");
 
 			//$err = validateForm($category, $company, $username, $email, $tel, $content, $policy);
 			echo("err=( $err )");
 			if ($err === '') {
-				include ('confirm.html');
+				//include ('confirm.php');
 			} else {
 				writeLog("問題があるから差し戻す");
-				include ('edit.html');
+				//include ('edit.php');
 			}
 		} elseif ($pagemode === 'edit') {
 			echo("pagemode = edit, username=$username");
-			include ('edit.html');
+			//include ('edit.php');
 		} elseif ($pagemode === 'finish') {
 			echo "[[[]]]";
 			//		include ('finish.html');
 		}
 	}
+}
+
+function _formGenerator($html) {
+	// 対象文字列を配列として取り出す。
+	preg_match_all('[[\[](.*?)[\]]]', $html, $src);
+
+	// 置換前文字列
+	$frm = array();
+	// 置換後文字列
+	$dst = array();
+
+	$ary = $src[0];
+	/*
+	 if($_POST['pagemode'] === 'confirm'){
+	 // confirm
+	 $dst = replace_f2($ary);
+	 }else{
+	 */
+	// index edit
+	$dst = replace_f($ary);
+	//}
+
+	foreach ($src[0] as $s) {
+		// 取り出した配列を元に置換前後の文字列を配列にする
+		$frm[] = '!' . preg_quote($s) . '!u';
+	}
+
+	$html = preg_replace($frm, $dst, $html);
+
+	echo $html;
 }

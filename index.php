@@ -17,7 +17,10 @@ $keytag = getKEYTAG();
 <form method="post" action="confirm.php" name="toiawase">
 <input type="hidden" name="pagemode" value="confirm" />
 <?php echo $keytag; ?>
-<input type="text" name="name"/>
+<?php
+$html = file_get_contents('form.html');
+_formGenerator($html);
+?>
 <input type="button" value="send" onclick="javascript:submit();"/>
 </form>
 <!-- /index.php -->

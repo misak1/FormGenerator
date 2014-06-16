@@ -13,7 +13,10 @@ $keytag = getKEYTAG();
 <body>
 <!-- <?php echo __FILE__; ?> -->
 <hr/>
-<?php echo $_POST['name']; ?>
+<?php
+$html = file_get_contents('form.html');
+_formGenerator($html);
+?>
 <hr/>
 
 <!-- confirm.php -->
