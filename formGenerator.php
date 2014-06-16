@@ -254,13 +254,13 @@ function replace_f($ary) {
 			$att[$k] = $v;
 		}
 
-		$outhtml = array();
 		$outhtmlChild = array();
 
+		$type;
 		if (isset($att['type'])) {
 			// 前後のダブルクォートを削除
-			$v = $att['type'];
-			$outhtmlChild[] = 'type="' . trim_d($v) . '"';
+			$type = trim_d($att['type']);
+			$outhtmlChild[] = 'type="' . $type . '"';
 
 		}
 
@@ -278,30 +278,40 @@ function replace_f($ary) {
 			continue;
 		}
 
+		$name;
 		if (isset($att['name'])) {
 			// 前後のダブルクォートを削除
-			$v = $att['name'];
-			$outhtmlChild[] = 'name="' . trim_d($v) . '[]"';
+			$name = trim_d($att['name']);
+			$outhtmlChild[] = 'name="' . $name . '[]"';
 		}
+		
+		$value;
 		if ($_POST['pagemode'] === 'edit') {
 			if (isset($att['value'])) {
 				// 前後のダブルクォートを削除
-				$v = $att['value'];
-				$aryVal = explode(',', trim_d($v));
+				$value = trim_d($att['value']);
+				$aryVal = explode(',', $value);
 
 				$parts = "";
 				// index.php confirm.php用
 				foreach ($aryVal AS $v) {
 					$t_ary = $outhtmlChild;
 
-					$n = $att['name'];
-					$n = trim_d($n);
+					// TODO
+					//$n = $att['name'];
+					//$n = trim_d($n);
 					//echo "n=$n v=$v, p=" . $_POST[$n][0] . "<hr/>";
-					if ($v === $_POST[$n][0]) {
-
-						$t_ary[] = 'value="' . $v . '" checked';
-					} else {
-						$t_ary[] = 'value="' . $v . '"';
+					
+					// checkbox
+					//echo "<pre>";var_dump($att);echo "</pre>";exit;
+					if($type === 'radio'){
+						if ($v === $_POST[$name][0]) {
+							$t_ary[] = 'value="' . $v . '" checked';
+						} else {
+							$t_ary[] = 'value="' . $v . '"';
+						}
+					}else{
+							$t_ary[] = 'value="' . $v . '"';
 					}
 					$parts .= '<label>' . $v . '<input ' . implode(' ', $t_ary) . ' /></label>';
 				}
@@ -311,8 +321,8 @@ function replace_f($ary) {
 		} else {
 			if (isset($att['value'])) {
 				// 前後のダブルクォートを削除
-				$v = $att['value'];
-				$aryVal = explode(',', trim_d($v));
+				$value = trim_d($att['value']);
+				$aryVal = explode(',', $value);
 
 				$parts = "";
 				// index.php confirm.php用
