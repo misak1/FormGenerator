@@ -8,6 +8,9 @@ formHandler();
 <head>
 <meta charset="utf-8" />
 <title>none</title>
+<link rel="stylesheet" type="text/css" href="form.css" />
+<link rel="stylesheet" type="text/css" media="(min-width:481px)" href="form-pc.css" />
+<link rel="stylesheet" type="text/css" media="(max-width:480px)" href="form-mobile.css" />
 </head>
 <body>
 <!-- <?php echo __FILE__; ?> -->

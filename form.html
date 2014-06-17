@@ -1,22 +1,32 @@
 <table style=" border: solid 1px #000;">
 	<tr>
-		<td> [iwmf label="性別" type="radio" name="sex" value="男,女"] </td>
+		<td id="td1"> [iwmf label="性別" type="radio" name="sex" value="男,女"] </td>
 	</tr>
 	<tr>
-		<td> [iwmf  label="E-mail" type="text" value="" name="email" validity="require,email"] </td>
+		<td id="td2"> [iwmf  label="E-mail" type="text" value="" name="email" validity="require,email"] </td>
 	</tr>
 	<tr>
-		<td> [iwmf type="checkbox" value="りんご,バナナ" label="果物" name="fruits" ] </td>
+		<td id="td3"> [iwmf type="checkbox" value="りんご,バナナ" label="果物" name="fruits" ] </td>
 	</tr>
 	<tr>
-		<td> [iwmf type="text" value=""  label="Message" name="hoge" validity="require"] </td>
+		<td id="td4"> [iwmf type="text" value=""  label="Message" name="hoge" validity="require"] </td>
 	</tr>
 	<tr>
-		<td> [iwmf type="checkbox" value="engine,moter" label="自動車" name="car"] </td>
+		<td id="td5"> [iwmf type="checkbox" value="エンジン,タイヤ,ホイール,シャフト,リアウィング" label="自動車" name="car"] </td>
+	</tr>
+	<tr>
+		<td id="td6"> [iwmf type="textarea" value="" label="お問合せ" name="info"] </td>
 	</tr>
 </table>
-
 <!-- 
-	require:必須：入力必須なので、内容を入力してください。
+	type属性（入力タグのタイプ指定) ※必須
+		radio
+		text
+		checkbox
+		
+	value属性 (radio 、checkboxでは必須, 値の設定半角カンマ指定)
 	
+	validity属性（データ検証、オプション）
+		require ：必須入力
+		email   ：メール型チェック 
 -->

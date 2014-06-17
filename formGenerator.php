@@ -231,13 +231,31 @@ function writeLog($msg) {
 	}
 	fclose($fp);
 }
-
+/**
+ * 前後のダブルクォート削除
+ */
 function trim_d($v) {
 	$v = preg_replace('/^\"/i', '', $v);
 	$v = preg_replace('/\"$/i', '', $v);
 	return $v;
 }
+/**
+ * トークンチェック
+ */
+function formHandler() {
+	foreach ($_POST as $k => $v) {
+		writeLog("_POST[" . $k . "]=$v");
+	}
+	foreach ($_SESSION as $k => $v) {
+		writeLog("_SESSION[" . $k . "]=$v");
+	}
 
+	if (!isValidPage()) {
+		writeLog("key not match, redirect to index");
+		// inputへ飛ばす
+		doRedirect("./");
+	}
+}
 /**
  * 短縮タグ解析
  */
@@ -288,18 +306,33 @@ function replace_main($aryShortTags) {
 		list($type, $name, $value, $label, $validity) = shortTagParser($shortTag);
 
 		// confirm
+		// ex) 入力内容<input type="hidden" name="name" value="value">
 		if (!$isError && $_POST['pagemode'] === 'confirm') {
 			$parts = array();
 			foreach ($_POST[$name] as $vv) {
 				$parts[] .= $vv . '<input type="hidden" name="' . $name . '[]" value="' . $vv . '"/>';
 			}
 			$dst[] = $label . implode(', ', $parts);
-
 			continue;
 		}
 
 		$outhtmlChild = array();
-		$outhtmlChild[] = 'type="' . $type . '"';
+		if($type === 'textarea'){
+			// textarea
+			$tag = build_textarea($type, $name, $value, $label, $validity);
+			$dst[] = $tag;
+			continue;
+			
+		}else if ( $type === 'select'){
+			// select
+			$tag = build_select($type, $name, $value, $label, $validity);
+			$dst[] = $tag;
+			continue;
+		}else{
+			// text, checkbox, radio 
+			$outhtmlChild[] = 'type="' . $type . '"';
+			
+		}
 		$outhtmlChild[] = 'name="' . $name . '[]"';
 
 		// 内容に問題がある場合 or 再編集
@@ -373,21 +406,12 @@ function replace_main($aryShortTags) {
 	//return $dst;
 	return array($isError, $dst);
 }
-
-function formHandler() {
-	foreach ($_POST as $k => $v) {
-		writeLog("_POST[" . $k . "]=$v");
-	}
-	foreach ($_SESSION as $k => $v) {
-		writeLog("_SESSION[" . $k . "]=$v");
-	}
-
-	if (!isValidPage()) {
-		writeLog("key not match, redirect to index");
-		// inputへ飛ばす
-		doRedirect("./");
-	}
+function build_textarea($type, $name, $value, $label, $validity){
+	$t_ary[] = 'name="' . $name . '[]"';
+	$tag = '<label>' . $label . '<textarea ' . implode(' ', $t_ary) . ' >'.$value.'</textarea></label>';
+	return $tag;
 }
+
 /**
  * 送信データのチェック （優先度の低いものから処理する。（エラーメッセージの上書き））
  */
