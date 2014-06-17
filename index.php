@@ -2,7 +2,6 @@
 require_once ('formGenerator.php');
 startSession();
 
-$keytag = getKEYTAG();
 ?>
 <!DOCTYPE HTML>
 <html lang="ja">
@@ -12,17 +11,7 @@ $keytag = getKEYTAG();
 </head>
 <body>
 <!-- <?php echo __FILE__; ?> -->
-<!-- index.php -->
-<!-- initSession セッションの初期化 -->
-<form method="post" action="confirm.php" name="toiawase">
-<input type="hidden" name="pagemode" value="confirm" />
-<?php echo $keytag; ?>
-<?php
-$html = file_get_contents('form.html');
-_formGenerator($html);
-?>
-<input type="button" value="send" onclick="javascript:submit();"/>
-</form>
-<!-- /index.php -->
+<?php _formGenerator(); ?>
+<!-- end.<?php echo __FILE__; ?> -->
 </body>
 </html>

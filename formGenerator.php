@@ -1,6 +1,7 @@
 <?php
 define(_SESSIONNAME_, 'IWMF');
 define(_IWMFLOG_, 'iwmf.log' );
+define(_LOOKFILE_, 'form.html' );
 
 date_default_timezone_set('Asia/Tokyo');
 
@@ -237,131 +238,140 @@ function trim_d($v) {
 	return $v;
 }
 
-function replace_f($ary) {
+/**
+ * 短縮タグ解析
+ */
+function shortTagParser($shortTag) {
+	$v = preg_replace('/^\[iwmf/i', '', $shortTag);
+	$v = preg_replace('/\]$/i', '', $v);
+	$tmp_att = explode(' ', $v);
+	// 空配列を除去
+	$tmp_att = array_filter($tmp_att);
+
+	// shortTagAttribute
+	foreach ($tmp_att AS $v2) {
+		list($k, $v) = explode('=', $v2);
+		$att[$k] = $v;
+	}
+
+	$list = array();
+	// TODO list関数で変数に格納する為、処理順には気をつける
+	$list[] = (isset($att['type'])) ? trim_d($att['type']) : '';
+	$list[] = (isset($att['name'])) ? trim_d($att['name']) : '';
+	$list[] = (isset($att['value'])) ? trim_d($att['value']) : '';
+	// TODO ラベルセパレータ付き
+	$list[] = (isset($att['label'])) ? trim_d($att['label']) . '：' : '';
+	$list[] = (isset($att['validity'])) ? trim_d($att['validity']) : '';
+	return $list;
+}
+
+function replace_main($aryShortTags) {
 	$dst = array();
-	foreach ($ary AS $v) {
-		// 前後の余分なテキストを削除
-		$v = preg_replace('/^\[iwmf/i', '', $v);
-		$v = preg_replace('/\]$/i', '', $v);
 
-		$tmp_att = explode(' ', $v);
-		// 空配列は消す
-		$tmp_att = array_filter($tmp_att);
-
-		$att = array();
-		foreach ($tmp_att AS $v2) {
-			list($k, $v) = explode('=', $v2);
-			$att[$k] = $v;
+	// 入力内容検証
+	$isError = FALSE;
+	$aryError = array();
+	if (isset($_POST['pagemode'])) {
+		// index以外
+		foreach ($aryShortTags AS $shortTag) {
+			list($type, $name, $value, $label, $validity) = shortTagParser($shortTag);
+			$errorMsg = validateForm($name, $validity);
+			if ($errorMsg !== '') {
+				$isError |= TRUE;
+			}
+			$aryError[$name] = $errorMsg;
 		}
+	}
 
-		$outhtmlChild = array();
-
-		$type;
-		if (isset($att['type'])) {
-			// 前後のダブルクォートを削除
-			$type = trim_d($att['type']);
-			$outhtmlChild[] = 'type="' . $type . '"';
-
-		}
+	// 置換文字列を作成
+	foreach ($aryShortTags AS $shortTag) {
+		list($type, $name, $value, $label, $validity) = shortTagParser($shortTag);
 
 		// confirm
-		if ($_POST['pagemode'] === 'confirm') {
-			$name;
-			if (isset($att['name'])) {
-				$name = trim_d($att['name']);
-				$parts = array();
-				$label = trim_d($att['label']) . "：";
-				foreach ($_POST[$name] as $vv) {
-					$parts[] .= $vv . '<input type="hidden" name="' . $name . '[]" value="' . $vv . '"/>';
-				}
-				$dst[] = $label . implode(', ', $parts);
+		if (!$isError && $_POST['pagemode'] === 'confirm') {
+			$parts = array();
+			foreach ($_POST[$name] as $vv) {
+				$parts[] .= $vv . '<input type="hidden" name="' . $name . '[]" value="' . $vv . '"/>';
 			}
+			$dst[] = $label . implode(', ', $parts);
+
 			continue;
 		}
 
-		$name;
-		if (isset($att['name'])) {
-			// 前後のダブルクォートを削除
-			$name = trim_d($att['name']);
-			$outhtmlChild[] = 'name="' . $name . '[]"';
-		}
+		$outhtmlChild = array();
+		$outhtmlChild[] = 'type="' . $type . '"';
+		$outhtmlChild[] = 'name="' . $name . '[]"';
 
-		$value;
-		if ($_POST['pagemode'] === 'edit') {
-			if (isset($att['value'])) {
-				// 前後のダブルクォートを削除
-				$value = trim_d($att['value']);
-				$aryVal = explode(',', $value);
+		// 内容に問題がある場合 or 再編集
+		if ($isError || $_POST['pagemode'] === 'edit') {
+			// edit.php
 
-				$label = trim_d($att['label']) . "：";
-				$parts = $label;
-				// index.php confirm.php用
-				foreach ($aryVal AS $v) {
-					//var_dump($v); echo "<br/>";
-					$t_ary = $outhtmlChild;
+			$parts = $label;
+			$aryVal = explode(',', $value);
+			foreach ($aryVal AS $v) {
+				$t_ary = $outhtmlChild;
 
-					if ($type === 'text') {
-						// text
-						$t_ary[] = 'value="' . $_POST[$name][0] . '"';
+				if ($type === 'text') {
+					// text
+					$t_ary[] = 'value="' . $_POST[$name][0] . '"';
 
-					} else if ($type === 'radio') {
-						// radio
-						if ($v === $_POST[$name][0]) {
-							$t_ary[] = 'value="' . $v . '" checked';
-						} else {
-							$t_ary[] = 'value="' . $v . '"';
-						}
-
-					} else if ($type === 'checkbox') {
-						// checkbox(複数あり)
-						$postAryVal = $_POST[$name];
-						if (in_array($v, $postAryVal, true)) {
-							$t_ary[] = 'value="' . $v . '" checked';
-						} else {
-							$t_ary[] = 'value="' . $v . '"';
-						}
-						$parts .= '<label>' . $v . '<input ' . implode(' ', $t_ary) . ' /></label>';
-
-						continue;
-
+				} else if ($type === 'radio') {
+					// radio
+					if ($v === $_POST[$name][0]) {
+						$t_ary[] = 'value="' . $v . '" checked';
 					} else {
 						$t_ary[] = 'value="' . $v . '"';
 					}
-					if ($type === 'radio' || $type === 'checkbox') {
-						$parts .= '<label>' . $v . '<input ' . implode(' ', $t_ary) . ' /></label>';
-					} else {
-						$parts .= '<label>' . $label . '<input ' . implode(' ', $t_ary) . ' /></label>';
-					}
-				}
-				$dst[] = $parts;
-			}
-		} else {
-			if (isset($att['value'])) {
-				// 前後のダブルクォートを削除
-				$value = trim_d($att['value']);
-				$aryVal = explode(',', $value);
 
-				$parts = "";
-				// TODO
-				$label = trim_d($att['label']) . "：";
-				$parts = $label;
-				// index.php confirm.php用
-				foreach ($aryVal AS $v) {
-					$t_ary = $outhtmlChild;
-					$t_ary[] = 'value="' . $v . '"';
-					if ($type === 'radio' || $type === 'checkbox') {
-						// 複数
-						$parts .= '<label>' . $v . '<input ' . implode(' ', $t_ary) . ' /></label>';
+				} else if ($type === 'checkbox') {
+					// checkbox(複数あり)
+					$postAryVal = $_POST[$name];
+					if (in_array($v, $postAryVal, true)) {
+						$t_ary[] = 'value="' . $v . '" checked';
 					} else {
-						// 単一(label上書き)
-						$parts = '<label>' . $label . '<input ' . implode(' ', $t_ary) . ' /></label>';
+						$t_ary[] = 'value="' . $v . '"';
 					}
+					$parts .= '<label>' . $v . '<input ' . implode(' ', $t_ary) . ' /></label>';
+
+					continue;
+
+				} else {
+					$t_ary[] = 'value="' . $v . '"';
 				}
+				if ($type === 'radio' || $type === 'checkbox') {
+					$parts .= '<label>' . $v . '<input ' . implode(' ', $t_ary) . ' /></label>';
+				} else {
+					$parts = '<label>' . $label . '<input ' . implode(' ', $t_ary) . ' /></label>';
+				}
+			}
+			if ($isError) {
+				$dst[] = $parts . '<span style="color:#f00;">' . $aryError[$name] . '</span>';
+			} else {
 				$dst[] = $parts;
 			}
+
+		} else {
+			// index.php
+
+			// 前後のダブルクォートを削除
+			$parts = $label;
+			$aryVal = explode(',', $value);
+			foreach ($aryVal AS $v) {
+				$t_ary = $outhtmlChild;
+				$t_ary[] = 'value="' . $v . '"';
+				if ($type === 'radio' || $type === 'checkbox') {
+					// 複数
+					$parts .= '<label>' . $v . '<input ' . implode(' ', $t_ary) . ' /></label>';
+				} else {
+					// 単一(label上書き)
+					$parts = '<label>' . $label . '<input ' . implode(' ', $t_ary) . ' /></label>';
+				}
+			}
+			$dst[] = $parts;
 		}
 	}
-	return $dst;
+	//return $dst;
+	return array($isError, $dst);
 }
 
 function formHandler() {
@@ -376,32 +386,35 @@ function formHandler() {
 		writeLog("key not match, redirect to index");
 		// inputへ飛ばす
 		doRedirect("./");
-	} else {
-		writeLog("key not match, redirect to index2");
-		$pagemode = (isset($_POST['pagemode'])) ? $_POST['pagemode'] : 'index';
-		writeLog("key matches: pagemode=" . $pagemode);
-		if ($pagemode === 'confirm') {
-			writeLog("pagemode is confirm");
-
-			//$err = validateForm($category, $company, $username, $email, $tel, $content, $policy);
-			echo("err=( $err )");
-			if ($err === '') {
-				//include ('confirm.php');
-			} else {
-				writeLog("問題があるから差し戻す");
-				//include ('edit.php');
-			}
-		} elseif ($pagemode === 'edit') {
-			echo("pagemode = edit, username=$username");
-			//include ('edit.php');
-		} elseif ($pagemode === 'finish') {
-			echo "[[[]]]";
-			//		include ('finish.html');
-		}
 	}
 }
+/**
+ * 送信データのチェック （優先度の低いものから処理する。（エラーメッセージの上書き））
+ */
+function validateForm($name, $validity) {
+	$errorMsg = '';
+	$aryValidity = explode(',' , $validity);
+	
+	if (in_array("email", $aryValidity)) {
+		$v = implode('', $_POST[$name]);
+		if (!isValidMailAddress($v)) {
+			$errorMsg = 'メールアドレスを入力して下さい。';
+		}
+		writeLog('validateForm() ' . $name . '="' . $v . '" $result="' . $errorMsg . '"');
+	}
+	
+	if (in_array("require", $aryValidity)) {
+		$v = implode('', $_POST[$name]);
+		if (empty($v)) {
+			$errorMsg = '必須項目なので入力してください。';
+		}
+		writeLog('validateForm() ' . $name . '="' . $v . '" $result="' . $errorMsg . '"');
+	}
 
-function _formGenerator($html) {
+	return $errorMsg;
+}
+function _formGenerator() {
+	$html = file_get_contents(_LOOKFILE_);
 	// 対象文字列を配列として取り出す。
 	preg_match_all('[[\[](.*?)[\]]]', $html, $src);
 
@@ -410,16 +423,82 @@ function _formGenerator($html) {
 	// 置換後文字列
 	$dst = array();
 
-	$ary = $src[0];
-	$dst = replace_f($ary);
-	//}
 
 	foreach ($src[0] as $s) {
 		// 取り出した配列を元に置換前後の文字列を配列にする
 		$frm[] = '!' . preg_quote($s) . '!u';
 	}
+	
+	$aryShortTags = $src[0];
+	//$dst = replace_main($aryShortTags);
+	list($isError, $dst) = replace_main($aryShortTags);
 
 	$html = preg_replace($frm, $dst, $html);
 
-	echo $html;
+	//echo $html;
+	// index/edit/confirm
+	$keytag = getKEYTAG();
+	
+	if (!isset($_POST['pagemode'])) {
+		// index
+		indexForm($keytag, $html);
+	}else if ($_POST['pagemode'] === 'edit') {
+		editForm($keytag, $html);
+	}else if ($_POST['pagemode'] === 'confirm') {
+		if($isError){
+			editForm($keytag, $html);
+		}else{
+			confirmForm($keytag, $html);
+		}
+	}else if ($_POST['pagemode'] === 'finish') {
+		finishForm($html);
+	}
 }
+?>
+<?php /**** FORM TEMPLATE ****/ ?> 
+<?php function indexForm($keytag, $html){ ?>
+	<!-- index.php -->
+	<!-- initSession セッションの初期化 -->
+	<form method="post" action="confirm.php" name="toiawase">
+	<input type="hidden" name="pagemode" value="confirm" />
+	<?php echo $keytag; ?>
+	<?php echo $html; ?>
+	<input type="button" value="send" onclick="javascript:submit();"/>
+	</form>
+	<!-- /index.php -->
+<?php } ?>
+<?php function editForm($keytag, $html){ ?>
+	<!-- edit.php -->
+	<form method="post" action="confirm.php" name="toiawase">
+	<input type="hidden" name="pagemode" value="confirm" />
+	<?php echo $keytag; ?>
+	<?php echo $html; ?>
+	<input type="button" value="send" onclick="javascript:submit();"/>
+	</form>
+	<!-- /edit.php -->
+<?php } ?>
+<?php function confirmForm($keytag, $html){ ?>
+	<!-- confirm.php -->
+	<form name="confirm_form" method="post">
+	<?php echo $keytag; ?>
+	<?php echo $html; ?>
+	<input type="hidden" name="pagemode" />
+	<input type="button" value="return" onclick='action_f("edit");' /><!-- 再編集 -->
+	<input type="button" value="done" onclick='action_f("finish");' /><!-- 確定 -->
+	</form>
+	<script type="text/javascript">
+	function action_f(to){
+		var fm = document.confirm_form;
+		fm.action = to +".php";
+		fm.pagemode.value = to;
+		fm.submit();
+	}
+	</script>
+	<!-- /confirm.php -->
+<?php } ?>
+<?php function finishForm($keytag, $html){ ?>
+	<!-- finish.php -->
+	Complite!
+	<!-- /finish.php -->
+<?php } ?>
+<?php /**** end. FORM TEMPLATE ****/ ?> 

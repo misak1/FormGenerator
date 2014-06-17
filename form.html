@@ -1,9 +1,22 @@
-<p>
-[iwmf label="性別" type="radio" name="sex" value="男,女"]<br/>
+<table style=" border: solid 1px #000;">
+	<tr>
+		<td> [iwmf label="性別" type="radio" name="sex" value="男,女"] </td>
+	</tr>
+	<tr>
+		<td> [iwmf  label="E-mail" type="text" value="" name="email" validity="require,email"] </td>
+	</tr>
+	<tr>
+		<td> [iwmf type="checkbox" value="りんご,バナナ" label="果物" name="fruits" ] </td>
+	</tr>
+	<tr>
+		<td> [iwmf type="text" value=""  label="Message" name="hoge" validity="require"] </td>
+	</tr>
+	<tr>
+		<td> [iwmf type="checkbox" value="engine,moter" label="自動車" name="car"] </td>
+	</tr>
+</table>
 
-[iwmf  label="てきすとボックス2" type="text" value="メールアドレス" name="email"]<br/>
-
-[iwmf type="checkbox" value="りんご,バナナ" label="果物" name="fruits"]<br/>[iwmf type="text" value="ボックス4"  label="てきすとボックス4" name="hoge"]<br/>
-
-[iwmf type="checkbox" value="engine,moter" label="自動車" name="car"]
-</p>
+<!-- 
+	require:必須：入力必須なので、内容を入力してください。
+	
+-->

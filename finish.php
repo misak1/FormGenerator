@@ -2,7 +2,6 @@
 require_once ('formGenerator.php');
 startSession();
 formHandler();
-
 ?>
 <!DOCTYPE HTML>
 <html lang="ja">
@@ -12,9 +11,7 @@ formHandler();
 </head>
 <body>
 <!-- <?php echo __FILE__; ?> -->
-<!-- index.php -->
-<!-- initSession セッションの初期化 -->
-Complite!
-<!-- /index.php -->
+<?php _formGenerator(); ?>
+<!-- end.<?php echo __FILE__; ?> -->
 </body>
 </html>
