@@ -2,8 +2,14 @@
 define(_SESSIONNAME_, 'IWMF');
 define(_IWMFLOG_, 'iwmf.log' );
 define(_LOOKFILE_, 'form.html' );
-
 date_default_timezone_set('Asia/Tokyo');
+
+// doAction
+// 例) formGenerator.php?do=scrape_tags
+if(isset($_REQUEST['do'])){
+	$function_name= $_REQUEST['do'];
+	$function_name();
+}
 
 function startSession(){
     session_name(_SESSIONNAME_);
@@ -317,11 +323,11 @@ function replace_main($aryShortTags) {
 		list($type, $name, $value, $label, $validity, $att) = shortTagParser($shortTag);
 
 		// confirm
-		// ex) 入力内容<input type="hidden" name="name" value="value">
+		// example) 入力内容<input type="hidden" name="name" value="value">
 		if (!$isError && $_POST['pagemode'] === 'confirm') {
 			$parts = array();
 			foreach ($_POST[$name] as $vv) {
-				$parts[] .= nl2br(HSC($vv)) . '<input type="hidden" name="' . $name . '[]" value="' . HSC($vv) . '"/>';
+				$parts[] .= '<span class="confirm_text">'. nl2br(HSC($vv)) . '</span><input type="hidden" name="' . $name . '[]" value="' . HSC($vv) . '"/>';
 			}
 			$dst[] = $label . implode(', ', $parts);
 			continue;
@@ -538,6 +544,124 @@ function _formGenerator() {
 	}else if ($_POST['pagemode'] === 'finish') {
 		finishForm($html);
 	}
+}
+/**
+ * ショートタグの抜き出し
+ */
+function scrape_tags(){
+	// textで表示
+	header("Content-Type: text/plain; charset=UTF-8");
+	$html = file_get_contents(_LOOKFILE_);
+	echo strip_tags($html);
+}
+
+function file_writer($url){
+	clearstatcache();
+	$fp=@fopen($file_name, 'ab');
+	if($f){
+	    fwrite($fp, date("Y/m/d H:i:s") . " " . $msg . "\n");
+	    fclose($fp);
+	    return true;
+	}
+	return false;
+}
+// 複数の処理をまとめただけ
+function trim_main ($str) {
+    $str = space_trim($str);
+    $str = lf_trim($str);
+    return $str;
+}
+// 改行コードの削除
+function lf_trim($email) {
+    // mail header injection 対策で、念のため $email から改行コードを削除しておく
+    $email = implode('', mb_split('\r\n', $email));
+    $email = implode('', mb_split('\r', $email));
+    $email = implode('', mb_split('\n', $email));
+    return $email;
+}
+// 全角・半角スペースの削除
+function space_trim ($str) {
+    // 先頭の半角・全角スペース削除
+    //$str = preg_replace('/^[ 　]+/u', '', $str);
+    // 末尾の半角・全角スペース削除
+    //$str = preg_replace('/[ 　]+$/u', '', $str);
+	// 文字中の全角・半角スペースを削除
+    $str = preg_replace('/[ 　]+/u', '', $str);
+    return $str;
+}
+/**
+ * 改行コードが複数存在する可能性も踏まえて、2種類の改行コード（\r\n、\r）を
+ * htmlでよく使う改行（\n）に統一した後、\nを区切りに配列へ入れていきます
+ */
+function lf_filter($txt) {
+    // テキストエリアの値を取得
+    $cr = array("\r\n", "\r");
+    // 改行コード置換用配列を作成しておく
+    // 文頭文末の空白を削除
+    $txt = trim($txt);
+    // 改行コードを統一
+    //str_replace ("検索文字列", "置換え文字列", "対象文字列");
+    $txt = str_replace($cr, "\n", $txt);
+    //改行コードで分割（結果は配列に入る）
+    $lines_array = explode("\n", $txt);
+    return $lines_array;
+}
+function toCrlf($txt) {
+    // 一旦 改行コードを揃えてから行分割する
+    $lines_array = lf_filter($txt);
+    $txt = implode("\r\n", $lines_array);
+    return $txt;
+}
+// example)　<メールアドレス1>,<メールアドレス2>,<メールアドレス3>
+function concat_meil($aryMailTo) {
+    $a = array();
+    $s = "";
+    foreach ($aryMailTo as $address) {
+        $address = trim_main($address);
+        $a[] = mb_encode_mimeheader(mb_convert_encoding($address, 'JIS','UTF-8')). '<' . $address . '>';
+    }
+    $s = implode(',', $a);
+    return $s;
+}
+function create_mailHeader($from, $sender){
+    $aryfrom[] = $from;
+    $arySender[] = $sender;
+    $from    = concat_meil($aryfrom);
+    $mail_sender  = concat_meil($arySender);
+    $header = toCrlf("From:".$from . "\n". "Sender:".$sender);
+    return $header;
+}
+
+function create_mailBody($onetime_url=""){
+    //$ts = date('Y年m月d日 H時i分s秒');
+    // TODO
+   // $body = file_get_contents($mf_mailbody_template);
+    //$body = implode(strval($onetime_url),           mb_split('%ONETIMEURL%', $body));
+    $body = "hogehoge";
+    return $body;
+}
+function sendmail(){
+	$from = "shibata@imagica-imageworks.co.jp";
+	$sender = "shibata@imagica-imageworks.co.jp";
+    $header = create_mailHeader($from, $sender);
+    $body = create_mailBody();
+    $aryTo[] = "shibata@imagica-imageworks.co.jp";
+    $subject = "test sendmail.";
+    $to = concat_meil($aryTo);
+    mb_send_mail($to, $subject, $body, $header);
+}
+/**
+ * @public
+ */ 
+function sendmail_test(){
+	$from = "shibata@imagica-imageworks.co.jp";
+	$sender = "shibata@imagica-imageworks.co.jp";
+    $header = create_mailHeader($from, $sender);
+    $body = create_mailBody();
+    $aryTo[] = "shibata@imagica-imageworks.co.jp";
+    $subject = "test sendmail.";
+    $to = concat_meil($aryTo);
+    mb_send_mail($to, $subject, $body, $header);
 }
 ?>
 <?php /**** FORM TEMPLATE ****/ ?> 
