@@ -542,6 +542,7 @@ function _formGenerator() {
 			confirmForm($keytag, $html);
 		}
 	}else if ($_POST['pagemode'] === 'finish') {
+		sendmail();
 		finishForm($html);
 	}
 }
@@ -635,9 +636,41 @@ function create_mailHeader($from, $sender){
 function create_mailBody($onetime_url=""){
     //$ts = date('Y年m月d日 H時i分s秒');
     // TODO
-   // $body = file_get_contents($mf_mailbody_template);
-    //$body = implode(strval($onetime_url),           mb_split('%ONETIMEURL%', $body));
-    $body = "hogehoge";
+    $html = file_get_contents(_LOOKFILE_);
+    $html = strip_tags($html);
+// 対象文字列を配列として取り出す。
+	preg_match_all('[[\[](.*?)[\]]]', $html, $src);
+
+	// 置換前文字列
+	$frm = array();
+	// 置換後文字列
+	$dst = array();
+
+	foreach ($src[0] as $s) {
+		// 取り出した配列を元に置換前後の文字列を配列にする
+		$frm[] = '!' . preg_quote($s) . '!u';
+	}
+	
+	$aryShortTags = $src[0];
+	//$dst = replace_main($aryShortTags);
+	 replace_main($aryShortTags);
+
+
+		// index以外
+		foreach ($aryShortTags AS $shortTag) {
+			list($type, $name, $value, $label, $validity, $att) = shortTagParser($shortTag);
+
+			$parts = array();
+			foreach ($_POST[$name] as $vv) {
+				$parts[] .= $vv;
+			}
+			$dst[] = $label . implode(', ', $parts);
+			continue;
+		}
+		
+		$body = preg_replace($frm, $dst, $html);
+		$body = mb_convert_encoding($body, 'JIS','UTF-8');
+
     return $body;
 }
 function sendmail(){
@@ -648,6 +681,16 @@ function sendmail(){
     $aryTo[] = "shibata@imagica-imageworks.co.jp";
     $subject = "test sendmail.";
     $to = concat_meil($aryTo);
+    
+mb_language('Japanese');
+ini_set('mbstring.detect_order', 'auto');
+ini_set('mbstring.http_input'  , 'auto');
+ini_set('mbstring.http_output' , 'pass');
+ini_set('mbstring.internal_encoding', 'UTF-8');
+ini_set('mbstring.script_encoding'  , 'UTF-8');
+ini_set('mbstring.substitute_character', 'none');
+mb_regex_encoding('UTF-8');
+
     mb_send_mail($to, $subject, $body, $header);
 }
 /**
