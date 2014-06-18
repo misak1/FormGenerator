@@ -3,19 +3,22 @@
 		<td id="td1"> [iwmf label="性別" type="radio" name="sex" value="男,女"] </td>
 	</tr>
 	<tr>
-		<td id="td2"> [iwmf  label="E-mail" type="text" value="" name="email" validity="require,email"] </td>
+		<td id="td2"> [iwmf  label="E-mail" type="text" value="" name="email" validity=""] </td>
 	</tr>
 	<tr>
 		<td id="td3"> [iwmf type="checkbox" value="りんご,バナナ" label="果物" name="fruits" ] </td>
 	</tr>
 	<tr>
-		<td id="td4"> [iwmf type="text" value=""  label="Message" name="hoge" validity="require"] </td>
+		<td id="td4"> [iwmf type="text" value=""  label="Message" name="hoge" validity=""] </td>
 	</tr>
 	<tr>
 		<td id="td5"> [iwmf type="checkbox" value="エンジン,タイヤ,ホイール,シャフト,リアウィング" label="自動車" name="car"] </td>
 	</tr>
 	<tr>
-		<td id="td6"> [iwmf type="textarea" value="" label="お問合せ" name="info"] </td>
+		<td id="td6"> [iwmf type="textarea" value="" label="お問合せ" name="info" cols="50" rows="10"] </td>
+	</tr>
+	<tr>
+		<td id="td7"> [iwmf type="select" value="北海道地方,東北地方,関東地方,中部地方,関西地方,中国地方,四国地方,九州地方,沖縄地方" label="選択" name="area"] </td>
 	</tr>
 </table>
 <!-- 
@@ -29,4 +32,6 @@
 	validity属性（データ検証、オプション）
 		require ：必須入力
 		email   ：メール型チェック 
+		
+validity="require,email"
 -->

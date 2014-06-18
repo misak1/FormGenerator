@@ -219,7 +219,14 @@ function isTLD($s) {
 	}
 	return $ret;
 }
-
+function HSC($var){
+	return htmlspecialchars($var);
+}
+function p_dump($var){
+	echo "<pre>";
+	var_dump($var);
+	echo "</pre>";
+}
 function writeLog($msg) {
 	if (!file_exists(_IWMFLOG_)) {
 		// Apacheの書込権限がある場合はファイルが作成される
@@ -280,6 +287,7 @@ function shortTagParser($shortTag) {
 	// TODO ラベルセパレータ付き
 	$list[] = (isset($att['label'])) ? trim_d($att['label']) . '：' : '';
 	$list[] = (isset($att['validity'])) ? trim_d($att['validity']) : '';
+	$list[] = $att; // その他
 	return $list;
 }
 
@@ -289,10 +297,11 @@ function replace_main($aryShortTags) {
 	// 入力内容検証
 	$isError = FALSE;
 	$aryError = array();
+	p_dump($aryShortTags);
 	if (isset($_POST['pagemode'])) {
 		// index以外
 		foreach ($aryShortTags AS $shortTag) {
-			list($type, $name, $value, $label, $validity) = shortTagParser($shortTag);
+			list($type, $name, $value, $label, $validity, $att) = shortTagParser($shortTag);
 			$errorMsg = validateForm($name, $validity);
 			if ($errorMsg !== '') {
 				$isError |= TRUE;
@@ -300,17 +309,19 @@ function replace_main($aryShortTags) {
 			$aryError[$name] = $errorMsg;
 		}
 	}
+	p_dump($aryError);
+	p_dump($_POST);
 
 	// 置換文字列を作成
 	foreach ($aryShortTags AS $shortTag) {
-		list($type, $name, $value, $label, $validity) = shortTagParser($shortTag);
+		list($type, $name, $value, $label, $validity, $att) = shortTagParser($shortTag);
 
 		// confirm
 		// ex) 入力内容<input type="hidden" name="name" value="value">
 		if (!$isError && $_POST['pagemode'] === 'confirm') {
 			$parts = array();
 			foreach ($_POST[$name] as $vv) {
-				$parts[] .= $vv . '<input type="hidden" name="' . $name . '[]" value="' . $vv . '"/>';
+				$parts[] .= nl2br(HSC($vv)) . '<input type="hidden" name="' . $name . '[]" value="' . HSC($vv) . '"/>';
 			}
 			$dst[] = $label . implode(', ', $parts);
 			continue;
@@ -319,13 +330,13 @@ function replace_main($aryShortTags) {
 		$outhtmlChild = array();
 		if($type === 'textarea'){
 			// textarea
-			$tag = build_textarea($type, $name, $value, $label, $validity);
+			$tag = build_textarea($type, $name, $value, $label, $validity, $att);
 			$dst[] = $tag;
 			continue;
 			
 		}else if ( $type === 'select'){
 			// select
-			$tag = build_select($type, $name, $value, $label, $validity);
+			$tag = build_select($type, $name, $value, $label, $validity, $aryAtt);
 			$dst[] = $tag;
 			continue;
 		}else{
@@ -406,12 +417,62 @@ function replace_main($aryShortTags) {
 	//return $dst;
 	return array($isError, $dst);
 }
-function build_textarea($type, $name, $value, $label, $validity){
+function build_textarea($type, $name, $value, $label, $validity, $att){
 	$t_ary[] = 'name="' . $name . '[]"';
+	if ($_POST['pagemode'] === 'edit') {
+		// edit用のタグ作成
+		$t_ary[] = (isset($att['cols'])) ?  'cols="'.trim_d($att['cols']).'"' : '';
+		$t_ary[] = (isset($att['rows'])) ?  'rows="'.trim_d($att['rows']).'"' : '';
+		$tag = '<label>' . $label . '<textarea ' . implode(' ', $t_ary) . ' >'. HSC($_POST[$name][0]) .'</textarea></label>';
+		return $tag;
+	}
+	// index用のタグ作成
+	$t_ary[] = (isset($att['cols'])) ?  'cols="'.trim_d($att['cols']).'"' : '';
+	$t_ary[] = (isset($att['rows'])) ?  'rows="'.trim_d($att['rows']).'"' : '';
 	$tag = '<label>' . $label . '<textarea ' . implode(' ', $t_ary) . ' >'.$value.'</textarea></label>';
 	return $tag;
 }
-
+function build_select($type, $name, $value, $label, $validity, $att){
+	$t_ary[] = 'name="' . $name . '[]"';
+	$aryVal = explode(',', $value);
+	//p_dump($att);
+	if ($_POST['pagemode'] === 'edit') {
+		// edit用のタグ作成
+		$t_ary[] = (isset($att['cols'])) ?  'cols="'.trim_d($att['cols']).'"' : '';
+		$t_ary[] = (isset($att['rows'])) ?  'rows="'.trim_d($att['rows']).'"' : '';
+		$tag = '<label>' . $label . '<select ' . implode(' ', $t_ary) . ' >';
+		$selectValue = $_POST[$name][0];
+		foreach($aryVal AS $v){
+			$selected = "";
+			if($selectValue === $v){
+				$selected = 'selected';
+			}
+			$tag .= '<option value="'.HSC($v).'" '.$selected.'>'.HSC($v).'</option>';
+		}
+		$tag .= '</label>';
+		return $tag;
+	}
+	// index用のタグ作成
+	$t_ary[] = (isset($att['cols'])) ?  'cols="'.trim_d($att['cols']).'"' : '';
+	$t_ary[] = (isset($att['rows'])) ?  'rows="'.trim_d($att['rows']).'"' : '';
+	$tag = '<label>' . $label . '<select ' . implode(' ', $t_ary) . ' >';
+	foreach($aryVal AS $v){
+		$tag .= '<option value="'.HSC($v).'">'.HSC($v).'</option>';
+	}
+	$tag .= '</label>';
+	return $tag;
+}
+/*
+// テンプレート
+function build_XXX($type, $name, $value, $label, $validity, $att){
+	if ($_POST['pagemode'] === 'edit') {
+		// edit用のタグ作成
+		return $tag;
+	}
+	// index用のタグ作成
+	return $tag;
+}
+*/
 /**
  * 送信データのチェック （優先度の低いものから処理する。（エラーメッセージの上書き））
  */
@@ -483,46 +544,98 @@ function _formGenerator() {
 <?php function indexForm($keytag, $html){ ?>
 	<!-- index.php -->
 	<!-- initSession セッションの初期化 -->
-	<form method="post" action="confirm.php" name="toiawase">
-	<input type="hidden" name="pagemode" value="confirm" />
+	<form id="iwmf_confirm_form" method="post">
+	<input id="iwmf_page_mode" type="hidden" name="pagemode"/>
 	<?php echo $keytag; ?>
 	<?php echo $html; ?>
-	<input type="button" value="send" onclick="javascript:submit();"/>
+	<input id="iwmf_send" type="button" value="send" onclick='javascript:action_f("confirm");'/>
 	</form>
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script type="text/javascript">
+		var $j172 = $.noConflict();
+		$j172(function() {
+			// ページ離脱イベント設定
+			$j172(window).on("beforeunload", function() {
+				return ("このページを離れようとしています。");
+			});
+		})
+		var action_f = function (to){
+			$j172('#iwmf_page_mode').val(to);
+			var fm = $j172('#iwmf_confirm_form');
+			fm.attr('action', to +'.php');
+			// ページ離脱イベント解除
+			$j172(window).off('beforeunload');
+			fm.submit();
+		}
+	</script>
 	<!-- /index.php -->
 <?php } ?>
 <?php function editForm($keytag, $html){ ?>
 	<!-- edit.php -->
-	<form method="post" action="confirm.php" name="toiawase">
-	<input type="hidden" name="pagemode" value="confirm" />
+	<form id="iwmf_confirm_form" method="post">
+	<input id="iwmf_page_mode" type="hidden" name="pagemode"/>
 	<?php echo $keytag; ?>
 	<?php echo $html; ?>
-	<input type="button" value="send" onclick="javascript:submit();"/>
+	<input id="iwmf_send" type="button" value="send" onclick='javascript:action_f("confirm");'/>
 	</form>
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script type="text/javascript">
+		var $j172 = $.noConflict();
+		$j172(function() {
+			// ページ離脱イベント設定
+			$j172(window).on("beforeunload", function() {
+				return ("このページを離れようとしています。");
+			});
+		})
+		var action_f = function (to){
+			$j172('#iwmf_page_mode').val(to);
+			var fm = $j172('#iwmf_confirm_form');
+			fm.attr('action', to +'.php');
+			// ページ離脱イベント解除
+			$j172(window).off('beforeunload');
+			fm.submit();
+		}
+	</script>
 	<!-- /edit.php -->
 <?php } ?>
 <?php function confirmForm($keytag, $html){ ?>
 	<!-- confirm.php -->
-	<form name="confirm_form" method="post">
+	<form id="iwmf_confirm_form" method="post">
 	<?php echo $keytag; ?>
 	<?php echo $html; ?>
-	<input type="hidden" name="pagemode" />
-	<input type="button" value="return" onclick='action_f("edit");' /><!-- 再編集 -->
-	<input type="button" value="done" onclick='action_f("finish");' /><!-- 確定 -->
+	<input id="iwmf_page_mode" type="hidden" name="pagemode"/>
+	<input id="iwmf_prev" type="button" value="return" onclick='javascript:action_f("edit");' /><!-- 再編集 -->
+	<input id="iwmf_next" type="button" value="done"   onclick='javascript:action_f("finish");' /><!-- 確定 -->
 	</form>
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	<script type="text/javascript">
-	function action_f(to){
-		var fm = document.confirm_form;
-		fm.action = to +".php";
-		fm.pagemode.value = to;
-		fm.submit();
-	}
+		var $j172 = $.noConflict();
+		$j172(function() {
+			// ページ離脱イベント設定
+			$j172(window).on("beforeunload", function() {
+				return ("このページを離れようとしています。");
+			});
+		})
+		var action_f = function (to){
+			$j172('#iwmf_page_mode').val(to);
+			var fm = $j172('#iwmf_confirm_form');
+			fm.attr('action', to +'.php');
+			// ページ離脱イベント解除
+			$j172(window).off('beforeunload');
+			fm.submit();
+		}
 	</script>
 	<!-- /confirm.php -->
 <?php } ?>
 <?php function finishForm($keytag, $html){ ?>
 	<!-- finish.php -->
 	Complite!
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script type="text/javascript">
+	    var $j172 = $.noConflict();
+	    $j172(function() {
+	    })
+	</script>
 	<!-- /finish.php -->
 <?php } ?>
 <?php /**** end. FORM TEMPLATE ****/ ?> 

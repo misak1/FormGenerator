@@ -7,6 +7,7 @@ startSession();
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no" />
 <title>none</title>
 <link rel="stylesheet" type="text/css" href="form.css" />
 <link rel="stylesheet" type="text/css" media="(min-width:481px)" href="form-pc.css" />
