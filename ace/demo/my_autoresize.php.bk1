@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Editor</title>
+  <style type="text/css" media="screen">
+
+	.ace_editor {
+		position: relative !important;
+		border: 1px solid lightgray;
+		margin: auto;
+		height: 200px;
+		width: 80%;
+	}
+	.scrollmargin {
+		height: 100px;
+        text-align: center;
+	}
+    </style>
+</head>
+<body>
+<?php
+function writeFile($filename, $str) {
+        clearstatcache();
+        $fp=@fopen($filename, 'wb');
+        if($fp){
+            fwrite($fp, $str . "\n");
+            fclose($fp);
+            echo "更新しました";
+        }
+        echo "更新出来ませんでした";
+}
+
+if(isset($_POST['form'])){
+   writeFile('form.html', $_POST['form']);
+}
+?>
+<form method="post">
+<pre id="editor1"><?php echo htmlspecialchars(file_get_contents('form.html'),ENT_QUOTES); ?></pre>
+<div class="scrollmargin"></div>
+
+<script src="kitchen-sink/require.js"></script>
+<script>
+// setup paths
+require.config({paths: { "ace" : "../lib/ace"}});
+// load ace and extensions
+require(["ace/ace"], function(ace) {
+
+    var editor1 = ace.edit("editor1");
+    editor1.setTheme("ace/theme/tomorrow_night_eighties");
+    editor1.session.setMode("ace/mode/html");
+    editor1.setAutoScrollEditorIntoView(true);
+    editor1.setOption("maxLines", 30);
+alert(editor1.getSession().getValue());
+});
+</script>
+
+<script>
+function s(){
+}
+</script>
+<p>
+<input type="button" onclick="s();" value="更新"/>
+</p>
+</form>
+
+</body>
+</html>
