@@ -13,14 +13,19 @@
 [iwmf label="チェックボックス１" type="radio" name="sex" value="男,女"]<br/>
 
 [iwmf  label="てきすとボックス2"   type="text" value="メールアドレスを入力" name="email"]<br/>
-
+[ahoge]
+[ahoge]
 [iwmf type="checkbox" value="りんご,バナナ" label="果物" name="fruits"]<br/>[iwmf type="text" value="ボックス4" name="hoge"]
 </p>
 TAG;
 
 			// 対象文字列を配列として取り出す。
-			preg_match_all('[[\[](.*?)[\]]]', $html, $src);
+			preg_match_all('[\[iwmf(.*?)[\]]]', $html, $src);
 
+			echo "<pre>";
+			var_dump($src);
+			echo "</pre>";
+			exit();
 			// 置換前文字列
 			$frm = array();
 			// 置換後文字列

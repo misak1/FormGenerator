@@ -303,7 +303,7 @@ function replace_main($aryShortTags) {
 	// 入力内容検証
 	$isError = FALSE;
 	$aryError = array();
-	p_dump($aryShortTags);
+	// p_dump($aryShortTags);
 	if (isset($_POST['pagemode'])) {
 		// index以外
 		foreach ($aryShortTags AS $shortTag) {
@@ -315,8 +315,8 @@ function replace_main($aryShortTags) {
 			$aryError[$name] = $errorMsg;
 		}
 	}
-	p_dump($aryError);
-	p_dump($_POST);
+	//p_dump($aryError);
+	//p_dump($_POST);
 
 	// 置換文字列を作成
 	foreach ($aryShortTags AS $shortTag) {
@@ -507,7 +507,8 @@ function validateForm($name, $validity) {
 function _formGenerator() {
 	$html = file_get_contents(_LOOKFILE_);
 	// 対象文字列を配列として取り出す。
-	preg_match_all('[[\[](.*?)[\]]]', $html, $src);
+	//preg_match_all('[[\[](.*?)[\]]]', $html, $src);
+	preg_match_all('[\[iwmf(.*?)[\]]]', $html, $src);
 
 	// 置換前文字列
 	$frm = array();
@@ -542,7 +543,7 @@ function _formGenerator() {
 			confirmForm($keytag, $html);
 		}
 	}else if ($_POST['pagemode'] === 'finish') {
-		sendmail();
+		sendmail($_POST['email'][0]);
 		finishForm($html);
 	}
 }
@@ -555,7 +556,14 @@ function scrape_tags(){
 	$html = file_get_contents(_LOOKFILE_);
 	echo strip_tags($html);
 }
-
+/**
+ * ショートタグの抜き出し
+ */
+function get_src(){
+	// textで表示
+	header("Content-Type: text/plain; charset=UTF-8");
+	echo file_get_contents(_LOOKFILE_);
+}
 function file_writer($url){
 	clearstatcache();
 	$fp=@fopen($file_name, 'ab');
@@ -673,12 +681,12 @@ function create_mailBody($onetime_url=""){
 
     return $body;
 }
-function sendmail(){
+function sendmail($email){
 	$from = "shibata@imagica-imageworks.co.jp";
 	$sender = "shibata@imagica-imageworks.co.jp";
     $header = create_mailHeader($from, $sender);
     $body = create_mailBody();
-    $aryTo[] = "shibata@imagica-imageworks.co.jp";
+    $aryTo[] = $email;
     $subject = "test sendmail.";
     $to = concat_meil($aryTo);
     

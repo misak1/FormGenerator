@@ -1,0 +1,22 @@
+#td1 label{
+    padding-left:15px;
+}
+
+/* checkbox label left */
+#td3 label,
+#td5 label {
+    padding-left:40px;
+    position:relative;
+}
+
+#td3 label input[type="checkbox"],
+#td5 label input[type="checkbox"] {
+    position:absolute;
+    top:0px;
+    left:15px;
+}
+/* /checkbox label left */
+
+span.confirm_text{
+    display:inline-block;
+}

@@ -1,37 +1,23 @@
-<table style=" border: solid 1px #000;">
+<table >
 	<tr>
-		<td id="td1"> [iwmf label="性別" type="radio" name="sex" value="男,女"] </td>
+		<td id="td1"> [iwmf type="select" value="お見積り、制作依頼に関して,当社業務に関して,営業・お取引のお申込み" label="お問い合わせ内容" name="category"] </td>
 	</tr>
 	<tr>
-		<td id="td2"> [iwmf  label="E-mail" type="text" value="" name="email" validity=""] </td>
+		<td id="td2"> [iwmf type="text" value=""  label="会社名" name="campany" validity=""] </td>
 	</tr>
 	<tr>
-		<td id="td3"> [iwmf type="checkbox" value="りんご,バナナ" label="果物" name="fruits" ] </td>
+		<td id="td3"> [iwmf type="text" value="" label="名前" name="name1" validity="require"] </td>
 	</tr>
 	<tr>
-		<td id="td4"> [iwmf type="text" value=""  label="Message" name="hoge" validity=""] </td>
+		<td id="td4"> [iwmf  label="メールアドレス" type="text" value="" name="email" validity="require,email"] </td>
 	</tr>
 	<tr>
-		<td id="td5"> [iwmf type="checkbox" value="エンジン,タイヤ,ホイール,シャフト,リアウィング" label="自動車" name="car"] </td>
+		<td id="td5"> [iwmf type="textarea" value="" label="お問合せ" name="info" cols="20" rows="5"] </td>
 	</tr>
 	<tr>
-		<td id="td6"> [iwmf type="textarea" value="" label="お問合せ" name="info" cols="50" rows="10"] </td>
+		<td id="td6"> [iwmf type="radio" value="はい,いいえ,どちらでもない" label="ラジオボタンサンプル" name="genre1"] </td>
 	</tr>
 	<tr>
-		<td id="td7"> [iwmf type="select" value="北海道地方,東北地方,関東地方,中部地方,関西地方,中国地方,四国地方,九州地方,沖縄地方" label="選択" name="area"] </td>
+		<td id="td7"> [iwmf type="checkbox" value="映像,デザイン,システム" label="チェックボックスンサンプル" name="genre2"] </td>
 	</tr>
 </table>
-<!-- 
-	type属性（入力タグのタイプ指定) ※必須
-		radio
-		text
-		checkbox
-		
-	value属性 (radio 、checkboxでは必須, 値の設定半角カンマ指定)
-	
-	validity属性（データ検証、オプション）
-		require ：必須入力
-		email   ：メール型チェック 
-		
-validity="require,email"
--->
