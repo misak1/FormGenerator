@@ -44,9 +44,11 @@ function isValidPage(){
     }
     return $ret;
 }
-function doRedirect($path){
-  header("HTTP/1.1 301 Moved Permanently");
-  header("Location: ${path}");
+function doRedirect_ermanently($path){
+  header("Location: ${path} ", true, 301);
+}
+function doRedirect_temporary($path){
+  header("Location: ${path} ", true, 307);
 }
 ?>
 <?php
@@ -234,15 +236,19 @@ function p_dump($var){
 	echo "</pre>";
 }
 function writeLog($msg) {
+        clearstatcache();
 	if (!file_exists(_IWMFLOG_)) {
 		// Apacheの書込権限がある場合はファイルが作成される
 		touch(_IWMFLOG_);
 	}
-	$fp = fopen(_IWMFLOG_, 'ab');
+	$fp = @fopen(_IWMFLOG_, 'ab');
 	if ($fp) {
 		fwrite($fp, date("Y/m/d H:i:s") . " " . $msg . "\n");
-	}
-	fclose($fp);
+                fclose($fp);
+                // 書込OK
+	}else{
+                // 書込NG
+        }
 }
 /**
  * 前後のダブルクォート削除
@@ -266,7 +272,7 @@ function formHandler() {
 	if (!isValidPage()) {
 		writeLog("key not match, redirect to index");
 		// inputへ飛ばす
-		doRedirect("./");
+		doRedirect_temporary("./");
 	}
 }
 /**
@@ -567,7 +573,7 @@ function get_src(){
 function file_writer($url){
 	clearstatcache();
 	$fp=@fopen($file_name, 'ab');
-	if($f){
+	if($fp){
 	    fwrite($fp, date("Y/m/d H:i:s") . " " . $msg . "\n");
 	    fclose($fp);
 	    return true;
@@ -700,6 +706,15 @@ ini_set('mbstring.substitute_character', 'none');
 mb_regex_encoding('UTF-8');
 
     mb_send_mail($to, $subject, $body, $header);
+}
+/**
+ * @public
+ */
+function form_reset(){
+    $file = 'form.html.org';
+    $newfile = 'form.html';
+    $r = copy($file, $newfile);
+    doRedirect_temporary("/fg/ace/demo/my_autoresize.php");
 }
 /**
  * @public
