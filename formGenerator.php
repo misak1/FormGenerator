@@ -44,11 +44,9 @@ function isValidPage(){
     }
     return $ret;
 }
-function doRedirect_ermanently($path){
-  header("Location: ${path} ", true, 301);
-}
-function doRedirect_temporary($path){
-  header("Location: ${path} ", true, 307);
+function doRedirect($path){
+  header("HTTP/1.1 301 Moved Permanently");
+  header("Location: ${path}");
 }
 ?>
 <?php
@@ -236,19 +234,15 @@ function p_dump($var){
 	echo "</pre>";
 }
 function writeLog($msg) {
-        clearstatcache();
 	if (!file_exists(_IWMFLOG_)) {
 		// Apacheの書込権限がある場合はファイルが作成される
 		touch(_IWMFLOG_);
 	}
-	$fp = @fopen(_IWMFLOG_, 'ab');
+	$fp = fopen(_IWMFLOG_, 'ab');
 	if ($fp) {
 		fwrite($fp, date("Y/m/d H:i:s") . " " . $msg . "\n");
-                fclose($fp);
-                // 書込OK
-	}else{
-                // 書込NG
-        }
+	}
+	fclose($fp);
 }
 /**
  * 前後のダブルクォート削除
@@ -272,7 +266,7 @@ function formHandler() {
 	if (!isValidPage()) {
 		writeLog("key not match, redirect to index");
 		// inputへ飛ばす
-		doRedirect_temporary("./");
+		doRedirect("./");
 	}
 }
 /**
@@ -296,8 +290,7 @@ function shortTagParser($shortTag) {
 	$list[] = (isset($att['type'])) ? trim_d($att['type']) : '';
 	$list[] = (isset($att['name'])) ? trim_d($att['name']) : '';
 	$list[] = (isset($att['value'])) ? trim_d($att['value']) : '';
-	// TODO ラベルセパレータ付き
-	$list[] = (isset($att['label'])) ? trim_d($att['label']) . '：' : '';
+	$list[] = (isset($att['label'])) ? trim_d($att['label']) : '';
 	$list[] = (isset($att['validity'])) ? trim_d($att['validity']) : '';
 	$list[] = $att; // その他
 	return $list;
@@ -330,6 +323,7 @@ function replace_main($aryShortTags) {
 
 		// confirm
 		// example) 入力内容<input type="hidden" name="name" value="value">
+		//p_dump($_POST);
 		if (!$isError && $_POST['pagemode'] === 'confirm') {
 			$parts = array();
 			foreach ($_POST[$name] as $vv) {
@@ -342,14 +336,16 @@ function replace_main($aryShortTags) {
 		$outhtmlChild = array();
 		if($type === 'textarea'){
 			// textarea
-			$tag = build_textarea($type, $name, $value, $label, $validity, $att);
-			$dst[] = $tag;
+			$dst[] = build_textarea($type, $name, $value, $label, $validity, $att);
 			continue;
 			
 		}else if ( $type === 'select'){
 			// select
-			$tag = build_select($type, $name, $value, $label, $validity, $aryAtt);
-			$dst[] = $tag;
+			$dst[] = build_select($type, $name, $value, $label, $validity, $att);
+			continue;
+		}else if ( $type === 'name'){
+			// select
+			$dst[] = build_name($type, $name, $value, $label, $validity, $att);
 			continue;
 		}else{
 			// text, checkbox, radio 
@@ -401,9 +397,15 @@ function replace_main($aryShortTags) {
 				}
 			}
 			if ($isError) {
-				$dst[] = $parts . '<span style="color:#f00;">' . $aryError[$name] . '</span>';
+				$tags = '<fieldset class="control-group">';
+				$tags .= $parts . '<span style="color:#f00;">' . $aryError[$name] . '</span>';
+				$tags .= '</fieldset>';
+				$dst[] = $tags;
 			} else {
-				$dst[] = $parts;
+				$tags = '<fieldset class="control-group">';
+				$tags .= $parts;
+				$tags .= '</fieldset>';
+				$dst[] = $tags;
 			}
 
 		} else {
@@ -423,7 +425,10 @@ function replace_main($aryShortTags) {
 					$parts = '<label>' . $label . '<input ' . implode(' ', $t_ary) . ' /></label>';
 				}
 			}
-			$dst[] = $parts;
+			$tags = '<fieldset class="control-group">';
+			$tags .= $parts;
+			$tags .= '</fieldset>';
+			$dst[] = $tags;
 		}
 	}
 	//return $dst;
@@ -435,13 +440,17 @@ function build_textarea($type, $name, $value, $label, $validity, $att){
 		// edit用のタグ作成
 		$t_ary[] = (isset($att['cols'])) ?  'cols="'.trim_d($att['cols']).'"' : '';
 		$t_ary[] = (isset($att['rows'])) ?  'rows="'.trim_d($att['rows']).'"' : '';
-		$tag = '<label>' . $label . '<textarea ' . implode(' ', $t_ary) . ' >'. HSC($_POST[$name][0]) .'</textarea></label>';
+		$tag = '<fieldset class="control-group">';
+		$tag .= '<label>' . $label . '<textarea ' . implode(' ', $t_ary) . ' >'. HSC($_POST[$name][0]) .'</textarea></label>';
+		$tag .= '</fieldset>';
 		return $tag;
 	}
 	// index用のタグ作成
 	$t_ary[] = (isset($att['cols'])) ?  'cols="'.trim_d($att['cols']).'"' : '';
 	$t_ary[] = (isset($att['rows'])) ?  'rows="'.trim_d($att['rows']).'"' : '';
-	$tag = '<label>' . $label . '<textarea ' . implode(' ', $t_ary) . ' >'.$value.'</textarea></label>';
+	$tag = '<fieldset class="control-group">';
+	$tag .= '<label>' . $label . '<textarea ' . implode(' ', $t_ary) . ' >'.$value.'</textarea></label>';
+	$tag .= '</fieldset>';
 	return $tag;
 }
 function build_select($type, $name, $value, $label, $validity, $att){
@@ -452,7 +461,8 @@ function build_select($type, $name, $value, $label, $validity, $att){
 		// edit用のタグ作成
 		$t_ary[] = (isset($att['cols'])) ?  'cols="'.trim_d($att['cols']).'"' : '';
 		$t_ary[] = (isset($att['rows'])) ?  'rows="'.trim_d($att['rows']).'"' : '';
-		$tag = '<label>' . $label . '<select ' . implode(' ', $t_ary) . ' >';
+		$tag = '<fieldset class="control-group">';
+		$tag .= '<label>' . $label . '<select ' . implode(' ', $t_ary) . ' >';
 		$selectValue = $_POST[$name][0];
 		foreach($aryVal AS $v){
 			$selected = "";
@@ -462,16 +472,51 @@ function build_select($type, $name, $value, $label, $validity, $att){
 			$tag .= '<option value="'.HSC($v).'" '.$selected.'>'.HSC($v).'</option>';
 		}
 		$tag .= '</label>';
+		$tag .= '</fieldset>';
 		return $tag;
 	}
 	// index用のタグ作成
 	$t_ary[] = (isset($att['cols'])) ?  'cols="'.trim_d($att['cols']).'"' : '';
 	$t_ary[] = (isset($att['rows'])) ?  'rows="'.trim_d($att['rows']).'"' : '';
-	$tag = '<label>' . $label . '<select ' . implode(' ', $t_ary) . ' >';
+	$tag = '<fieldset class="control-group">';
+	$tag .= '<label>' . $label . '<select ' . implode(' ', $t_ary) . ' >';
 	foreach($aryVal AS $v){
 		$tag .= '<option value="'.HSC($v).'">'.HSC($v).'</option>';
 	}
 	$tag .= '</label>';
+	$tag .= '</fieldset>';
+	return $tag;
+}
+/**
+ * type='name'
+ * group_label='名前'
+ * labal='姓,名'
+ */
+function build_name($type, $name, $value, $label, $validity, $att){
+	$t_ary[] = 'type="text"'; 
+	$t_ary[] = 'name="'.$name.'[]"'; 
+	$group_label = (isset($att['group_label'])) ?  trim_d($att['group_label']) : '';
+	list($sei, $mei) = explode(',', $label);
+	$t_ary1 = $t_ary2 = $t_ary;
+	if ($_POST['pagemode'] === 'edit') {
+		// edit用のタグ作成
+		$t_ary1[] = 'value="'.$_POST[$name][0].'"';
+		$t_ary2[] = 'value="'.$_POST[$name][1].'"';
+		$tag = '<fieldset class="control-group">';
+		$tag .= '<legend>'.$group_label.'</legend>';
+		$tag .= '<label>' . $sei . '<input ' . implode(' ', $t_ary1) . ' /></label>';
+		$tag .= '<label>' . $mei . '<input ' . implode(' ', $t_ary2) . ' /></label>';
+		$tag .= '</fieldset>';
+		return $tag;
+	}
+	// index用のタグ作成
+	list($val1, $val2) = explode(',', $value);
+	$t_ary1[] = 'value="'.$val1.'"';
+	$t_ary2[] = 'value="'.$val2.'"';
+	$tag = '<fieldset class="control-group">'.$group_label;
+	$tag .= '<label>' . $sei . '<input ' . implode(' ', $t_ary1) . ' /></label>';
+	$tag .= '<label>' . $mei . '<input ' . implode(' ', $t_ary2) . ' /></label>';
+	$tag .= '</fieldset>';
 	return $tag;
 }
 /*
@@ -573,7 +618,7 @@ function get_src(){
 function file_writer($url){
 	clearstatcache();
 	$fp=@fopen($file_name, 'ab');
-	if($fp){
+	if($f){
 	    fwrite($fp, date("Y/m/d H:i:s") . " " . $msg . "\n");
 	    fclose($fp);
 	    return true;
@@ -669,7 +714,6 @@ function create_mailBody($onetime_url=""){
 	//$dst = replace_main($aryShortTags);
 	 replace_main($aryShortTags);
 
-
 		// index以外
 		foreach ($aryShortTags AS $shortTag) {
 			list($type, $name, $value, $label, $validity, $att) = shortTagParser($shortTag);
@@ -706,15 +750,6 @@ ini_set('mbstring.substitute_character', 'none');
 mb_regex_encoding('UTF-8');
 
     mb_send_mail($to, $subject, $body, $header);
-}
-/**
- * @public
- */
-function form_reset(){
-    $file = 'form.html.org';
-    $newfile = 'form.html';
-    $r = copy($file, $newfile);
-    doRedirect_temporary("/fg/ace/demo/my_autoresize.php");
 }
 /**
  * @public
