@@ -531,18 +531,18 @@ function build_address4($type, $name, $value, $label, $validity, $att){
 	// index用のタグ作成
 	$tag = '<fieldset class="control-group">';
 	$tag .= '<label>郵便番号';
-	$tag .= '<input type="text"  name="address4[]" size="4" maxlength="3" id="zipC11">';
-	$tag .= '-<input type="text" name="address4[]" size="5" maxlength="4" id="zipC12" onkeyup="AjaxZip3.zip2addr(\'zipC11\',\'zipC12\',\'prefC2\',\'prefC3\',\'prefC4\');">';
+	$tag .= '<input type="text"  name="zip[]" size="4" maxlength="3" id="zipC11">';
+	$tag .= '-<input type="text" name="zip[]" size="5" maxlength="4" id="zipC12" onkeyup="AjaxZip3.zip2addr(\'zipC11\',\'zipC12\',\'prefC2\',\'prefC3\',\'prefC4\');">';
 	$tag .= '</label>';
 	$tag .= '</fieldset>';
 	$tag .= '<fieldset class="control-group">';
-	$tag .= '<label>都道府県<input type="text" class="xlarge" name="address4[]" id="prefC2"></label>';
+	$tag .= '<label>都道府県<input type="text" class="xlarge" name="pref[]" id="prefC2"></label>';
 	$tag .= '</fieldset>';
 	$tag .= '<fieldset class="control-group">';
-	$tag .= '<label>市町村区<input type="text" class="xlarge" name="address5[]" id="prefC3"></label>';
+	$tag .= '<label>市町村区<input type="text" class="xlarge" name="add1[]" id="prefC3"></label>';
 	$tag .= '</fieldset>';
 	$tag .= '<fieldset class="control-group">';
-	$tag .= '<label>以降の住所<input type="text" class="xlarge span4" name="address6[]" id="prefC4"></label>';
+	$tag .= '<label>以降の住所<input type="text" class="xlarge span4" name="add2[]" id="prefC4"></label>';
 	$tag .= '</fieldset>';
 	return $tag;
 }
