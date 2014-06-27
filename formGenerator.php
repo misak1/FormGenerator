@@ -323,7 +323,7 @@ function replace_main($aryShortTags) {
 
 		// confirm
 		// example) 入力内容<input type="hidden" name="name" value="value">
-		//p_dump($_POST);
+p_dump($_POST);
 		if (!$isError && $_POST['pagemode'] === 'confirm') {
 			$parts = array();
 			foreach ($_POST[$name] as $vv) {
@@ -346,6 +346,10 @@ function replace_main($aryShortTags) {
 		}else if ( $type === 'name'){
 			// select
 			$dst[] = build_name($type, $name, $value, $label, $validity, $att);
+			continue;
+		}else if ( $type === 'address4'){
+			// select
+			$dst[] = build_address4($type, $name, $value, $label, $validity, $att);
 			continue;
 		}else{
 			// text, checkbox, radio 
@@ -516,6 +520,29 @@ function build_name($type, $name, $value, $label, $validity, $att){
 	$tag = '<fieldset class="control-group">'.$group_label;
 	$tag .= '<label>' . $sei . '<input ' . implode(' ', $t_ary1) . ' /></label>';
 	$tag .= '<label>' . $mei . '<input ' . implode(' ', $t_ary2) . ' /></label>';
+	$tag .= '</fieldset>';
+	return $tag;
+}
+function build_address4($type, $name, $value, $label, $validity, $att){
+	if ($_POST['pagemode'] === 'edit') {
+		// edit用のタグ作成
+		return $tag;
+	}
+	// index用のタグ作成
+	$tag = '<fieldset class="control-group">';
+	$tag .= '<label>郵便番号';
+	$tag .= '<input type="text"  name="address4[]" size="4" maxlength="3" id="zipC11">';
+	$tag .= '-<input type="text" name="address4[]" size="5" maxlength="4" id="zipC12" onkeyup="AjaxZip3.zip2addr(\'zipC11\',\'zipC12\',\'prefC2\',\'prefC3\',\'prefC4\');">';
+	$tag .= '</label>';
+	$tag .= '</fieldset>';
+	$tag .= '<fieldset class="control-group">';
+	$tag .= '<label>都道府県<input type="text" class="xlarge" name="address4[]" id="prefC2"></label>';
+	$tag .= '</fieldset>';
+	$tag .= '<fieldset class="control-group">';
+	$tag .= '<label>市町村区<input type="text" class="xlarge" name="address5[]" id="prefC3"></label>';
+	$tag .= '</fieldset>';
+	$tag .= '<fieldset class="control-group">';
+	$tag .= '<label>以降の住所<input type="text" class="xlarge span4" name="address6[]" id="prefC4"></label>';
 	$tag .= '</fieldset>';
 	return $tag;
 }
@@ -776,6 +803,7 @@ function sendmail_test(){
 	<input id="iwmf_send" type="button" value="send" onclick='javascript:action_f("confirm");'/>
 	</form>
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script type="text/javascript" src="./ajaxzip3-custom.js" charset="UTF-8"></script>
 	<script type="text/javascript">
 		var $j172 = $.noConflict();
 		$j172(function() {
@@ -804,6 +832,7 @@ function sendmail_test(){
 	<input id="iwmf_send" type="button" value="send" onclick='javascript:action_f("confirm");'/>
 	</form>
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script type="text/javascript" src="./ajaxzip3-custom.js" charset="UTF-8"></script>
 	<script type="text/javascript">
 		var $j172 = $.noConflict();
 		$j172(function() {
@@ -833,6 +862,7 @@ function sendmail_test(){
 	<input id="iwmf_next" type="button" value="done"   onclick='javascript:action_f("finish");' /><!-- 確定 -->
 	</form>
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script type="text/javascript" src="./ajaxzip3-custom.js" charset="UTF-8"></script>
 	<script type="text/javascript">
 		var $j172 = $.noConflict();
 		$j172(function() {
@@ -856,6 +886,7 @@ function sendmail_test(){
 	<!-- finish.php -->
 	Complite!
 	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script type="text/javascript" src="./ajaxzip3-custom.js" charset="UTF-8"></script>
 	<script type="text/javascript">
 	    var $j172 = $.noConflict();
 	    $j172(function() {
